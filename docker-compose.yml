@@ -20,7 +20,7 @@ services:
     networks:
       - app-tier
     command:
-      bash -c "mongorestore --host=mongo --archive=example --nsFrom=BudgetBalancer.* --nsTo=BudgetBalancer.* && tail -f /dev/null"
+      bash -c "tail -f /dev/null"
     volumes:
       - ./app:/app
 
