@@ -5,5 +5,7 @@ WORKDIR /app
 COPY py-requirements.txt /app/py-requirements.txt
 
 RUN pip install --no-cache-dir -r py-requirements.txt
-RUN wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.0.deb
-RUN apt install ./mongodb-database-tools-debian10-x86_64-100.5.0.deb
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
+RUN apt update
+RUN apt upgrade -y
+RUN apt install mongo-tools -y
