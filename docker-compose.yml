@@ -1,0 +1,29 @@
+version: '3'
+
+services: 
+
+  mongo:
+    image: mongo
+    networks:
+      - app-tier
+    volumes:
+      - ./db:/data/db
+    ports:
+      - 27017:27017
+
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on: 
+      - mongo
+    networks:
+      - app-tier
+    command:
+      bash -c "mongorestore --host=mongo --archive=example --nsFrom=BudgetBalancer.* --nsTo=BudgetBalancer.* && tail -f /dev/null"
+    volumes:
+      - ./app:/app
+
+networks:
+  app-tier:
+    driver: bridge
