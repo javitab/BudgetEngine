@@ -23,6 +23,7 @@ services:
       bash -c "tail -f /dev/null"
     volumes:
       - ./app:/app
+      - ./projoutput:/projoutput
 
 networks:
   app-tier:
