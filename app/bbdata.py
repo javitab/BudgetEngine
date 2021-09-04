@@ -439,7 +439,8 @@ class acct:
             frames = [toDfData,balDf]
             balDf = pd.concat(frames)
             iterDate = txIterate('Daily',iterDate)
-        return projBalanceTotal,projRecID,balDf
+        numBalances = balDf[balDf.columns[0]].count()
+        return projBalanceTotal,projRecID,balDf,numBalances
            
 class revenue:
 

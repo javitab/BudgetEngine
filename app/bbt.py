@@ -5,18 +5,17 @@ import http.server
 import socketserver
 import os
 
+projEnd = '2022-12-31'
+acctName = 'Joint'
+acct = bb.acct(acctName)
 
-projEnd = '2021-12-31'
+proj = acct.projRev(projEnd)
 
-expenseacct = bb.acct('Expense')
+expDf = proj[2]
 
-expenseproj = expenseacct.projRev(projEnd)
+print(acctName,"account projected balance for",projEnd,"will be $",proj[0])
 
-expDf = expenseproj[2]
-
-print("Expense account projected balance for",projEnd,"will be $",expenseproj[0])
-
-expDf.plot(kind='line',x='Date',y='Balance',title='Expense account projected balances')
+expDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (acctName, proj[0])))
 plt.savefig('./proj_output/output.png')
 
 PORT = 8080
@@ -27,10 +26,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
 try:
-    while True:
-        with socketserver.TCPServer(("", PORT), Handler) as httpd:
-            print("Serving output at http://localhost:%s" % PORT)
-            httpd.serve_forever()
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print("Serving output at http://localhost:%s" % PORT)
+        print("Press Ctrl-C to terminate")
+        httpd.serve_forever()
 except KeyboardInterrupt:
-    print("Press Ctrl-C to terminate")
     httpd.server_close()
