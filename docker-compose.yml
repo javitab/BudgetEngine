@@ -24,6 +24,8 @@ services:
     volumes:
       - ./app:/app
       - ./projoutput:/projoutput
+    ports:
+    - 8080:8080
 
 networks:
   app-tier:
