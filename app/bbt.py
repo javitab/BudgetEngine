@@ -27,6 +27,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 try:
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        httpd.server_close()
         print("Serving output at http://localhost:%s" % PORT)
         print("Press Ctrl-C to terminate")
         httpd.serve_forever()
