@@ -1,3 +1,5 @@
 \db
 .DS_Store
-app/proj_output
+\proj_output
+\app\__pycache__
+app/__pycache__/bbdata.cpython-39.pyc
