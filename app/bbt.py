@@ -16,7 +16,7 @@ expDf = proj[2]
 print(acctName,"account projected balance for",projEnd,"will be $",proj[0])
 
 expDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (acctName, proj[0])))
-plt.savefig('./proj_output/output.png')
+plt.savefig('/projoutput/output.png')
 
 PORT = 8080
 DIRECTORY = "proj_output"
