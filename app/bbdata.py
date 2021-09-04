@@ -70,6 +70,10 @@ def listExpenses(acctName):
     x = expenses.find({ 'acctID': acctName}).sort('DayOfMonth')
     return x
 
+def listRevenue(acctName):
+    "This function returns all expenses for an account for he entire month regardless of day"
+    x = revenues.find({ 'Account': acctName}).sort('StartDate')
+
 def dfMonthlyExpenses(acctName):
     "This function returns all expenses for an account for the entire month regardless of day as a dataframe"
     X = pd.DataFrame(list(getExpenses(acctName)))
@@ -98,6 +102,10 @@ def totalExpenses(acctName):
 def listRevenue(acctName):
     "This function returns all sources of revenue for a given acctName"
     x = revenues.find({ 'Account': acctName})
+    return x
+def listAccounts():
+    "This function returns all accounts"
+    x = accts.find()
     return x
 
 def dfMonthlyRevenue(acctName):

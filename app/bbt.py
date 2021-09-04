@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 projEnd = '2022-12-31'
-acctName = 'Joint'
+acctName = 'Expense'
 acct = bb.acct(acctName)
 
 proj = acct.projRev(projEnd)
