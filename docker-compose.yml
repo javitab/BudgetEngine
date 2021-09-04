@@ -9,7 +9,7 @@ services:
     volumes:
       - ./db:/data/db
     ports:
-      - 27017:27017
+      - 27017:27018
 
   python:
     build:
@@ -20,12 +20,17 @@ services:
     networks:
       - app-tier
     command:
-      bash -c "tail -f /dev/null"
+      bash -c "sh ./loadExampleData.sh && tail -f /dev/null"
     volumes:
       - ./app:/app
       - ./projoutput:/projoutput
+  
+  web:
+    image: nginx
     ports:
-    - 8080:8080
+      - 8080:80
+    volumes:
+      - ./projoutput:/usr/share/nginx/html
 
 networks:
   app-tier:

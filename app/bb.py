@@ -5,7 +5,6 @@ import bbdata as bb
 import pprint
 from tabulate import tabulate
 import pandas as pd
-import bbproj
 import bbrecView
 
 acctArg = 0
