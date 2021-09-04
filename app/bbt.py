@@ -19,7 +19,7 @@ expDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balance
 plt.savefig('/projoutput/output.png')
 
 PORT = 8080
-DIRECTORY = "proj_output"
+DIRECTORY = "/projoutput"
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
