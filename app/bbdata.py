@@ -475,6 +475,7 @@ class acct:
                         projBalanceTotal = projBalanceTotal - iAmount
                         verbose("Seq ID: %s Date: %s Memo: %s Amonut: $%s TxType: %s Running Balance %s"% (iSeq,iDate,iMemo,iAmount,iTxType,projBalanceTotal))
             writeprojDateBalance(iterDate,projBalanceTotal)
+            if projBalanceTotal < self.LowBalAlert: print(iterDate,": Balance is below Low Alert Level of %s at %s" % (self.LowBalAlert,projBalanceTotal))
             #Write budget values to dataframe
             toDfData = pd.DataFrame({'Date': [iterDate],
                         'Balance': [projBalanceTotal]})

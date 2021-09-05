@@ -32,16 +32,12 @@ def acctMenu():
             print(acct.name,"has been selected")
             newBalance = float(input("Please input new balance (XX.XX) : "))
             acct.setCurrBalance(newBalance)
-            acct.reset()
-            print("New balance of %s has been set for %s account" % (acct.CurrBalance,acct.name))
         if action == '3':
             acctToUpdate = input("Please enter account to update: ")
             acct = bb.acct(acctToUpdate)
             print(acct.name,"has been selected")
             NewLowBalance = float(input("Please enter new low balance alert level: (XXXX.XX)"))
             acct.setLowBalAlertLevel(NewLowBalance)
-            acct.reset()
-            print("New low balance alert level of %s has been set for %s account" % (acct.LowBalAlert,acct.name))
         if action == '4':
             projEndInput = input("Enter end date for projection: ")
             projAcctInput = input("Enter account for projection: ")
