@@ -9,6 +9,12 @@ from tabulate import tabulate
 from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 from bson import ObjectId
+import os
+def pause():
+    programPause = input("Press the <ENTER> key to continue...")
+
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
 
 CurrDay = dt.datetime.today().day
 CurrMonth = dt.datetime.today().month
@@ -33,6 +39,18 @@ def verbose(object):
         print(object)
     elif verboseON == 0:
         pass
+
+def menuGen(actions,mnuName,clear=1):
+    "This function takes an input of an array of actions and generates a menu with an output of action"
+    if clear == 1: cls()
+    print(("=== Printing menu of available options for %s===") % mnuName)
+    for i in actions:
+        print(i)
+    print("Q: Quit")
+    action = input("What would you like to do? ")
+    if action == "Q" or action == 'q': action = 'Q'
+    if clear == 1: cls()
+    return action
 
 def convDate(inputdate):
     "This function takes an input convDate and formats as datetime value and strips time"
