@@ -9,7 +9,7 @@ services:
     volumes:
       - ./db:/data/db
     ports:
-      - 27017:27018
+      - 27017:27017
 
   python:
     build:
@@ -31,6 +31,8 @@ services:
       - 8080:80
     volumes:
       - ./projoutput:/usr/share/nginx/html
+    networks:
+      - app-tier
 
 networks:
   app-tier:
