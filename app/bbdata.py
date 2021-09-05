@@ -43,11 +43,13 @@ def verbose(object):
 def menuGen(actions,mnuName,clear=1):
     "This function takes an input of an array of actions and generates a menu with an output of action"
     if clear == 1: cls()
+    print("\n")
     print(("=== Printing available options for %s===") % mnuName)
     for i in actions:
         print(i)
     print("Q: Quit")
     action = input("What would you like to do? ")
+    print("\n")
     if action == "Q" or action == 'q': action = 'Q'
     if clear == 1: cls()
     return action
@@ -209,6 +211,11 @@ class acct:
         self.name = self.data['Name']
         self.acctID = self.data['_id']
         self.CurrBalance = self.data['CurrBalance']
+        self.LowBalAlert = self.data['LowBalance']
+    
+    def reset(self):
+        "Reinitializes the current instance of the class. Intended for use after new values have been written to the DB"
+        self.__init__(self.acctName)
 
     def display(self):
         print("Acct name: ", self.name, end=', ')
@@ -250,6 +257,15 @@ class acct:
             { '$set':
                 {
                     'CurrBalance': currBalance
+                }
+                }
+        )
+    def setLowBalAlertLevel(self, LowBalLevel):
+        accts.update_one(
+            { '_id': self.acctID},
+            { '$set':
+                {
+                    'LowBalance': LowBalLevel
                 }
                 }
         )
