@@ -43,7 +43,7 @@ def verbose(object):
 def menuGen(actions,mnuName,clear=1):
     "This function takes an input of an array of actions and generates a menu with an output of action"
     if clear == 1: cls()
-    print(("=== Printing menu of available options for %s===") % mnuName)
+    print(("=== Printing available options for %s===") % mnuName)
     for i in actions:
         print(i)
     print("Q: Quit")
