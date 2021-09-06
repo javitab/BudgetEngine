@@ -26,7 +26,7 @@ actions = [
 def revMenu():
     continueRevLoop = 1
     while continueRevLoop == 1:
-        action = bb.menuGen(actions,"Revenue menu")
+        action = bb.menuGen(actions,"Revenue menu",0)
         if action == '1':
             bb.printAsDataFrame(bb.listCollection("accounts"))
             inputacctID = input("Please enter account: ")
