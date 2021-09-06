@@ -24,7 +24,8 @@ def insertExpense(acctID, DayOfMonth, Name, Amount, StartDate, EndDate):
 actions = [
     "1: Print all expenses for account",
     "2: Print expenses for all accounts",
-    "3: Create new expense"
+    "3: Set LastPostedDate",
+    "4: Create new expense"
 ]
 
 def expMenu():
@@ -38,6 +39,12 @@ def expMenu():
         if action == '2':
             bb.printAsDataFrame(bb.listCollection('expenses'))
         if action == '3':
+            currExp = bb.expense(input("Please enter the name of the expense you would like to update: "))
+            iterNextDate = bb.txIterate('Monthly',currExp.LastPostedDate)
+            newDateConf = input("Is the new LastPostedDate %s? (y/n)" % iterNextDate)
+            if newDateConf == 'y': currExp.setLastPostedDate(iterNextDate)
+            if newDateConf == 'n': currExp.setLastPostedDate(bb.convDate(input("Please enter the new LastPostedDate (YYYY-MM-DD)")))
+        if action == '4':
             print("Please enter info for new expense:")
             bb.printAsDataFrame(bb.listCollection("accounts"))
             inputacctID = input("Please enter account: ")

@@ -10,12 +10,20 @@ from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 from bson import ObjectId
 import os
-def pause():
-    programPause = input("Press the <ENTER> key to continue...")
 
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
 
+#connecting to db
+myclient = pymongo.MongoClient("mongodb://mongo:27017/")
+bbdb = myclient["BudgetBalancer"]
+
+#defining collection cursors
+accts = bbdb["accounts"]
+expenses = bbdb["expenses"]
+revenues = bbdb["revenue"]
+projection = bbdb["projections"]
+postedtx = bbdb['postedtx']
+
+#defining dates
 CurrDay = dt.datetime.today().day
 CurrMonth = dt.datetime.today().month
 CurrYear = dt.datetime.today().year
@@ -24,13 +32,6 @@ CurrInst = dt.datetime.today()
 LastDayCurr = cal.monthrange(CurrYear, CurrMonth)[1]
 LastDate = dt.datetime(CurrYear,CurrMonth,LastDayCurr)
 FirstDayCurr = dt.datetime(CurrYear,CurrMonth,1)
-myclient = pymongo.MongoClient("mongodb://mongo:27017/")
-bbdb = myclient["BudgetBalancer"]
-
-accts = bbdb["accounts"]
-expenses = bbdb["expenses"]
-revenues = bbdb["revenue"]
-projection = bbdb["projections"]
 
 verboseON = 0
 
@@ -39,6 +40,12 @@ def verbose(object):
         print(object)
     elif verboseON == 0:
         pass
+
+def pause():
+    programPause = input("Press the <ENTER> key to continue...")
+
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
 
 def menuGen(actions,mnuName,clear=1):
     "This function takes an input of an array of actions and generates a menu with an output of action"
@@ -87,7 +94,7 @@ def getExpenses(acctName):
 
 def listExpenses(acctName):
     "This function returns all expenses for an account for the entire month regardless of day"
-    x = expenses.find({ 'acctID': acctName}).sort('DayOfMonth')
+    x = expenses.find({ 'acctID': acctName}).sort('LastPostedDate')
     return x
 
 def listRevenue(acctName):
@@ -195,6 +202,13 @@ class expense:
             { '$set': { 'EndDate': expEndDate}}
         )
         self.reset()
+    def setLastPostedDate(self, LastPostedDate):
+        expenses.update_one(
+            { 'Name': self.name},
+            { '$set': { 'LastPostedDate': LastPostedDate}}
+        )
+        self.reset()
+
 
 
 class acct:
@@ -212,6 +226,7 @@ class acct:
         self.acctID = self.data['_id']
         self.CurrBalance = self.data['CurrBalance']
         self.LowBalAlert = self.data['LowBalance']
+        self.TxLastPosted = self.data['TxLastPosted']
     
     def reset(self):
         "Reinitializes the current instance of the class. Intended for use after new values have been written to the DB"
@@ -287,6 +302,7 @@ class acct:
         projRecID = x.inserted_id
         projRecIDQuery = { '_id': projRecID }
         verbose(projRecID)
+        
         #Defining a few functions for things that will be written to db
 
         def writeprojTx(memo,amount,date,txtypeinput):
@@ -476,7 +492,7 @@ class acct:
                         verbose("Seq ID: %s Date: %s Memo: %s Amonut: $%s TxType: %s Running Balance %s"% (iSeq,iDate,iMemo,iAmount,iTxType,projBalanceTotal))
             writeprojDateBalance(iterDate,projBalanceTotal)
             if projBalanceTotal < self.LowBalAlert: print(iterDate,": Balance is below Low Alert Level of %s at %s" % (self.LowBalAlert,projBalanceTotal))
-            #Write budget values to dataframe
+            #Write balance values to dataframe
             toDfData = pd.DataFrame({'Date': [iterDate],
                         'Balance': [projBalanceTotal]})
             frames = [toDfData,balDf]
@@ -522,4 +538,11 @@ class revenue:
             self.reset()
         elif revExclDate in self.exclusionDates:
             print("Value already exists")
+
+    def setLastPostedDate(self, LastPostedDate):
+        revenues.update_one(
+                { 'Name': self.name },
+                { '$set': {'LastDatePosted': LastPostedDate}}
+            )
+        self.reset()
 
