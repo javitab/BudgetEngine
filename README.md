@@ -9,7 +9,7 @@ If you wish to use test data, run the below commands:
 
 ```
 sudo docker exec -it budgetbalancer_python_1 bash
-mongorestore --host=mongo --archive=example --nsFrom=BudgetBalancer.* --nsTo=BudgetBalancer.*
+sh ./loadExampleData.sh
 ```
 
 ### TODO:
