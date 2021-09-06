@@ -19,7 +19,8 @@ revenueImport = [
 actions = [
     "1: Print revenue for account",
     "2: Print revenue for all accounts",
-    "3: Add exclusion date"
+    "3: Add exclusion date",
+    "4: Set LastPostedDate"
 
 ]
 
@@ -27,6 +28,8 @@ def revMenu():
     continueRevLoop = 1
     while continueRevLoop == 1:
         action = bb.menuGen(actions,"Revenue menu",0)
+        if action == 'Q':
+            continueRevLoop = 0
         if action == '1':
             bb.printAsDataFrame(bb.listCollection("accounts"))
             inputacctID = input("Please enter account: ")
@@ -40,5 +43,10 @@ def revMenu():
             query = {'Name': revName}
             addExclusionDate = { '$push': { 'ExclusionDates': dateToExclude}}
             x = bb.revenues.update_one(query, addExclusionDate)
-        if action == 'Q':
-            continueRevLoop = 0
+        if action == '4':
+            currRev = bb.revenue(input("Please enter the name of the revenue you would like to update: "))
+            iterNextDate = bb.txIterate(currRev.Frequency,currRev.LastDatePosted)
+            newDateConf = input("Is the new LastPostedDate %s? (y/n)" % iterNextDate)
+            if newDateConf == 'y': currRev.setLastPostedDate(iterNextDate)
+            if newDateConf == 'n': currRev.setLastPostedDate(bb.convDate(input("Please enter the new LastPostedDate (YYYY-MM-DD)")))
+        
