@@ -4,4 +4,4 @@ projoutput/
 app/__pycache__/
 *.pyc
 loadLocalData.sh
-
+.env

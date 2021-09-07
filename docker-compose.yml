@@ -11,6 +11,8 @@ services:
       - ./db:/data/db
     ports:
       - 27017:27017
+    env_file: 
+      - .env
 
   python:
     container_name: bb_python
@@ -26,6 +28,8 @@ services:
     volumes:
       - ./app:/app
       - ./projoutput:/projoutput
+    env_file: 
+      - .env
   
   web:
     image: nginx
@@ -36,6 +40,8 @@ services:
       - ./projoutput:/usr/share/nginx/html
     networks:
       - app-tier
+    env_file: 
+      - .env
 
 networks:
   app-tier:
