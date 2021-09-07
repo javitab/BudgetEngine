@@ -16,6 +16,6 @@ HOST_EXTERNAL_IP=127.0.0.1
 If you wish to use test data, run the below commands: 
 
 ```
-sudo docker exec -it budgetbalancer_python_1 bash
+sudo docker exec -it bb_python bash
 sh ./loadExampleData.sh
 ```
