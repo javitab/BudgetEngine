@@ -47,6 +47,6 @@ def acctMenu():
             print(projAcctInput,"account projected balance for",projEndInput,"will be $",proj[0])
             projDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (projAcctInput, proj[0])))
             plt.savefig('/projoutput/output.png')
-            print("Projection graph available at: http://localhost:8080/output.png")
+            print("Projection graph available at: http://%s:8080/output.png" % bb.extIP)
         if action == 'Q':
             continueAcctLoop = 0

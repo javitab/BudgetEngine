@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from bson import ObjectId
 import os
 
+extIP = os.environ.get('HOST_EXTERNAL_IP')
 
 #connecting to db
 myclient = pymongo.MongoClient("mongodb://mongo:27017/")
