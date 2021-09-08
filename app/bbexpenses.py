@@ -73,5 +73,5 @@ def expMenu():
         if action == '6':
             currExp =  bb.expense(input("Please enter name of expense that you wish to modify: "))
             print("Expense selected: ",currExp.name)
-            newAmount = input("Please enter the new amount for the expense (XX.XX) : ")
+            newAmount = float(input("Please enter the new amount for the expense (XX.XX) : "))
             currExp.changeAmount(newAmount)
