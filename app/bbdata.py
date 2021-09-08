@@ -209,6 +209,11 @@ class expense:
             { '$set': { 'LastPostedDate': LastPostedDate}}
         )
         self.reset()
+    def changeAmount(self, newAmount):
+        expenses.update_one(
+            { 'Name': self.name},
+            { '$set': { 'Amount': newAmount}}
+        )
 
 
 

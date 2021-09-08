@@ -25,13 +25,17 @@ actions = [
     "1: Print all expenses for account",
     "2: Print expenses for all accounts",
     "3: Set LastPostedDate",
-    "4: Create new expense"
+    "4: Create new expense",
+    "5: Add end date to expense",
+    "6: Change amount"
 ]
 
 def expMenu():
     continueExpLoop = 1
     while continueExpLoop == 1:
         action = bb.menuGen(actions,"Expense menu",0)
+        if action == 'Q':
+            continueExpLoop = 0
         if action == '1':
             bb.printAsDataFrame(bb.listCollection("accounts"))
             inputacctID = input("Please enter account: ")
@@ -61,5 +65,13 @@ def expMenu():
             elif inputEndDate != "":
                 EndDateFormatted = bb.convDate(inputEndDate)
             insertExpense(inputacctID,DayOfMonth,inputName,AmountInt,StartDateFormatted,EndDateFormatted)
-        if action == 'Q':
-            continueExpLoop = 0
+        if action == '5':
+            currExp =  bb.expense(input("Please enter name of expense that you wish to modify: "))
+            print("Expense selected: ",currExp.name)
+            EndDate = input("Please enter the desired end date for expense (YYYY-MM-DD) : ")
+            currExp.addEndDate(EndDate)
+        if action == '6':
+            currExp =  bb.expense(input("Please enter name of expense that you wish to modify: "))
+            print("Expense selected: ",currExp.name)
+            newAmount = input("Please enter the new amount for the expense (XX.XX) : ")
+            currExp.changeAmount(newAmount)
