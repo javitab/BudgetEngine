@@ -22,7 +22,9 @@ def postTxMenu():
             print("View all posted transactions")
             bb.printAsDataFrame(bb.listCollection("accounts"))
             acctName = input("What account would you like to get transactions for? ")
-            getTxData(acctName)
+            output = getTxData(acctName)
+            dfTxData = bb.mongoArrayDf(output,'PostedTxs')
+            bb.printDf(dfTxData)
         if action == '2':
             print("View all posted transacations since date, work in progress")
         if action == '3':
@@ -106,32 +108,30 @@ def getTxData(acctName):
         '$unwind': {
             'path': '$PostedTxs'
         }
-    }, {
-        '$project': {
-            'PostedTxs.Memo': 1, 
-            'PostedTxs.Amount': 1, 
-            'PostedTxs.Date': 1, 
-            'PostedTxs.TxType': 1, 
-            'PostedTxs.AdHoc': 1,
-            'PostedTxs.Balance': 1
+    },  {
+        '$group': {
+            '_id': '$acctName', 
+            'PostedTxs': {
+                '$push': {
+                    'txID': '$PostedTxs.txID',
+                    'Memo': '$PostedTxs.Memo', 
+                    'Amount': '$PostedTxs.Amount', 
+                    'Date': '$PostedTxs.Date', 
+                    'TxType': '$PostedTxs.TxType', 
+                    'AdHoc': '$PostedTxs.AdHoc', 
+                    'Balance': '$PostedTxs.Balance'
+                }
+            }
         }
-    }, {
+    }, 
+    {
         '$project': {
             '_id': 0
         }
     }
 ])
 
-    #Iterate through data
-    for tx in acctTxData:
-        postedTx = (tx['PostedTxs'])
-        postedTxMemo = postedTx['Memo']
-        postedTxAmount = postedTx['Amount']
-        postedTxDate = postedTx['Date']
-        postedTxType = postedTx['TxType']
-        postedTxAdHoc = postedTx['AdHoc']
-        postedTxBalance = postedTx['Balance']
-        print("%s %s $%s %s AdHoc: %s Balance: $%s" % (postedTxDate,postedTxType,postedTxAmount,postedTxMemo,postedTxAdHoc,postedTxBalance))
+    return acctTxData
 
 def writeTx(TxAccount,TxType,TxDate,TxAmount,TxMemo,IsAdhoc,TxBalance):
     "This function will write posted transactions"
