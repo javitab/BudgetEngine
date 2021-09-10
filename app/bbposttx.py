@@ -1,10 +1,14 @@
+from re import search
+from pandas.io import json
 import bbdata as bb
+import bson
 
 actions = [
     "1: View all posted transactions for account",
     "2: View posted transactions for account since date",
     "3: Post transactions",
-    "4: Create posted transaction log for account"
+    "4: Create posted transaction log for account",
+    "5: Search for transactions by memo and TxType in account"
 ]
 
 def postTxMenu():
@@ -79,6 +83,14 @@ def postTxMenu():
             print("Create blank transaction log")
             acctName = input("What account would you like to create a transaction log for? ")
             CreateBlankTxLog(acctName)
+        if action == '5':
+            print("Search for transactions in specified account by TxType and Memo")
+            acctName = input("Please enter name of account to search: ")
+            TxType = input("Please enter TxType to search (credit/debit) : ")
+            Memo = input("Please enter Memo to search : ")
+            output = searchTxData(acctName,Memo,TxType)
+            dfsearchTxData = bb.mongoArrayDf(output,'PostedTxs')
+            bb.printDf(dfsearchTxData)
         
 
 
@@ -109,6 +121,7 @@ def getTxData(acctName):
         }
     }
 ])
+
     #Iterate through data
     for tx in acctTxData:
         postedTx = (tx['PostedTxs'])
@@ -125,7 +138,8 @@ def writeTx(TxAccount,TxType,TxDate,TxAmount,TxMemo,IsAdhoc,TxBalance):
     postedTxAcctQuery = { 'acctName': TxAccount }
     postedTxToWrite = {'$push':
             {'PostedTxs':
-                {   "Memo": TxMemo,
+                {   "txID": bson.ObjectId(),
+                    "Memo": TxMemo,
                     "Amount": TxAmount,
                     "Date": TxDate,
                     "TxType": TxType,
@@ -148,3 +162,45 @@ def CreateBlankTxLog(acctName):
                 "acctName": acctName
             }
         )
+
+def searchTxData(acctName,Memo,TxType):
+    "This function will get all transactions in a fiven account matching a search on memo"
+    searchTxData = bb.postedtx.aggregate([
+    {
+        '$match': {
+            'acctName': acctName
+        }
+    }, {
+        '$unwind': {
+            'path': '$PostedTxs'
+        }
+    }, {
+        '$match': {
+            'PostedTxs.Memo': {
+                '$regex': Memo
+            }, 
+            'PostedTxs.TxType': TxType
+        }
+    }, {
+        '$group': {
+            '_id': '$acctName', 
+            'PostedTxs': {
+                '$push': {
+                    'txID': '$PostedTxs.txID',
+                    'Memo': '$PostedTxs.Memo', 
+                    'Amount': '$PostedTxs.Amount', 
+                    'Date': '$PostedTxs.Date', 
+                    'TxType': '$PostedTxs.TxType', 
+                    'AdHoc': '$PostedTxs.AdHoc', 
+                    'Balance': '$PostedTxs.Balance'
+                }
+            }
+        }
+    }, 
+    {
+        '$project': {
+            '_id': 0
+        }
+    }
+])
+    return searchTxData

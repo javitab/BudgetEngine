@@ -8,8 +8,10 @@ import pandas as pd
 from tabulate import tabulate
 from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
-from bson import ObjectId
+from bson import ObjectId, json_util
 import os
+import bson
+import json
 
 extIP = os.environ.get('HOST_EXTERNAL_IP')
 
@@ -47,6 +49,12 @@ def pause():
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
+
+def mongoArrayDf(mongo_data,arrayName):
+    sanitized = json.loads(json_util.dumps(mongo_data))
+    normalized = pd.json_normalize(sanitized, arrayName)
+    df = pd.DataFrame(normalized)
+    return df
 
 def menuGen(actions,mnuName,clear=1):
     "This function takes an input of an array of actions and generates a menu with an output of action"
