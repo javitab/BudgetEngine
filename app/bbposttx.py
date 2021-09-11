@@ -116,7 +116,10 @@ def getTxData(acctName):
                     'txID': '$PostedTxs.txID',
                     'Memo': '$PostedTxs.Memo', 
                     'Amount': '$PostedTxs.Amount', 
-                    'Date': '$PostedTxs.Date', 
+                    'Date': {
+                        '$dateToString': {
+                            'format': '%Y-%m-%d', 
+                            'date': '$PostedTxs.Date'}}, 
                     'TxType': '$PostedTxs.TxType', 
                     'AdHoc': '$PostedTxs.AdHoc', 
                     'Balance': '$PostedTxs.Balance'
@@ -189,7 +192,10 @@ def searchTxData(acctName,Memo,TxType):
                     'txID': '$PostedTxs.txID',
                     'Memo': '$PostedTxs.Memo', 
                     'Amount': '$PostedTxs.Amount', 
-                    'Date': '$PostedTxs.Date', 
+                    'Date': {
+                        '$dateToString': {
+                            'format': '%Y-%m-%d', 
+                            'date': '$PostedTxs.Date'}}, 
                     'TxType': '$PostedTxs.TxType', 
                     'AdHoc': '$PostedTxs.AdHoc', 
                     'Balance': '$PostedTxs.Balance'
