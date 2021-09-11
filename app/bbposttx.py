@@ -126,11 +126,6 @@ def getTxData(acctName):
                 }
             }
         }
-    }, 
-    {
-        '$project': {
-            '_id': 0
-        }
     }
 ])
 
