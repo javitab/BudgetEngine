@@ -202,11 +202,6 @@ def searchTxData(acctName,Memo,TxType):
                 }
             }
         }
-    }, 
-    {
-        '$project': {
-            '_id': 0
-        }
     }
 ])
     return searchTxData
