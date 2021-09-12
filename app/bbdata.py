@@ -623,10 +623,72 @@ class postedTx:
          print("TxType: ",self.TxType, end=' ')
          print("AdHoc: ",self.AdHoc, end=' ')
          print("Balance: ",self.balance)
+        self.rawData = postedtx.aggregate([
+    {
+        '$unwind': {
+            'path': '$PostedTxs'
+        }
+    }, {
+        '$match': {
+            'PostedTxs.txID': ObjectId(txID)
+        }
+    }, {
+        '$group': {
+            '_id': '$acctName', 
+            'PostedTxs': {
+                '$push': {
+                    'txID': '$PostedTxs.txID', 
+                    'Date': {
+                        '$dateToString': {
+                            'format': '%Y-%m-%d', 
+                            'date': '$PostedTxs.Date'
+                        }
+                    }, 
+                    'Account': '$acctName', 
+                    'Memo': '$PostedTxs.Memo', 
+                    'Amount': '$PostedTxs.Amount', 
+                    'TxType': '$PostedTxs.TxType', 
+                    'AdHoc': '$PostedTxs.AdHoc', 
+                    'Balance': '$PostedTxs.Balance'
+                }
+            }
+        }
+    }
+])
+        sanitizedData = json.loads(json_util.dumps(self.rawData))
+        normalizedData = pd.json_normalize(sanitizedData, 'PostedTxs')
+        self.data = normalizedData
+        #pprint.pprint(self.data)
+        self.txID = txID
+        self.date = self.data['Date'][0]
+        self.account = self.data['Account'][0]
+        self.memo = self.data['Memo'][0]
+        self.amount = self.data['Amount'][0]
+        self.TxType = self.data['TxType'][0]
+        self.AdHoc = self.data['AdHoc'][0]
+        self.balance = self.data['Balance'][0]
+
+
+    def reset(self):
+        "Reinitializes the current instance of the class. Intended for use after new values have been written to the DB"
+        self.__init__(self.name)
+    
+    def display(self):
+        "Prints current data in class"
+        print("txID: ",self.txID, end=' ')
+        print("Date: ",self.date, end=' ')
+        print("Account: ",self.account, end=' ')
+        print("Memo: ",self.memo, end=' ')
+        print("Amount: ",self.amount, end=' ')
+        print("TxType: ",self.TxType, end=' ')
+        print("AdHoc: ",self.AdHoc, end=' ')
+        print("Balance: ",self.balance)
+
 
     def searchTxData(acctName,Memo,TxType,df):
         "This function will get all transactions in a given account matching a search on memo"
         searchTxData = postedtx.aggregate([
+
          {
              '$match': {
                  'acctName': acctName
@@ -712,6 +774,8 @@ class postedTx:
         "This function will get all transactions for a given account"
         #Get data for account
         acctTxData = postedtx.aggregate([
+
+
         {
             '$match': {
                 'acctName': acctName
@@ -720,13 +784,25 @@ class postedTx:
             '$unwind': {
                 'path': '$PostedTxs'
             }
+
         },  {
+
+        }, {
+            '$match': {
+                'PostedTxs.Memo': {
+                    '$regex': Memo
+                }, 
+                'PostedTxs.TxType': TxType
+            }
+        }, {
+
             '$group': {
                 '_id': '$acctName', 
                 'PostedTxs': {
                     '$push': {
                         'txID': '$PostedTxs.txID',
                         'Memo': '$PostedTxs.Memo', 
+                        'Account': '$acctName', 
                         'Amount': '$PostedTxs.Amount', 
                         'Date': {
                             '$dateToString': {
@@ -741,8 +817,16 @@ class postedTx:
         }
     ])
 
+
         if df == True:
             acctTxData = mongoArrayDf(acctTxData,'PostedTxs')
         else:
             acctTxData = acctTxData
         return acctTxData
+
+        if df == True:
+            searchTxData = mongoArrayDf(searchTxData,'PostedTxs')
+        else:
+            searchTxData = searchTxData
+        return searchTxData
+
