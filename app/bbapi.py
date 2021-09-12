@@ -36,5 +36,5 @@ def txAcct():
     return Response(txdata.to_json(orient='records'), mimetype='application/json')
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0',port='81')
+    app.run(host='0.0.0.0',port='81')
     
