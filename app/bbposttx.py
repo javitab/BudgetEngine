@@ -162,7 +162,7 @@ def CreateBlankTxLog(acctName):
         )
 
 def searchTxData(acctName,Memo,TxType):
-    "This function will get all transactions in a fiven account matching a search on memo"
+    "This function will get all transactions in a given account matching a search on memo"
     searchTxData = bb.postedtx.aggregate([
     {
         '$match': {

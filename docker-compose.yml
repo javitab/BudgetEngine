@@ -30,6 +30,8 @@ services:
       - ./projoutput:/projoutput
     env_file: 
       - .env
+    ports:
+      - 8181:81
   
   web:
     image: nginx
