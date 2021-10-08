@@ -50,7 +50,7 @@ tabulate==0.8.9
 tqdm==4.62.2
 twine==3.4.2
 typing==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.5
 ushlex==0.99.1
 webencodings==0.5.1
 websocket-client==1.2.1
