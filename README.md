@@ -2,7 +2,7 @@
 
 ### Brief Description
 
-Python/MongoDB app that forecasts balances and maintancs a ledger of posted transactions for accounts given recurring and ad hoc expenses and revenue.
+Python/MongoDB app that forecasts account balances based on current values and maintains a ledger of posted transactions for accounts given recurring and ad hoc expenses and revenue.
 
 ### Development
 
