@@ -2,7 +2,7 @@
 
 ### Brief Description
 
-Python/MongoDB app that is capable of forecasting account balances based upon definied revenues and expenses per account.
+Python/MongoDB app that is capable of forecasting account balances based upon defined revenues and expenses per account.
 
 ## env file
 
