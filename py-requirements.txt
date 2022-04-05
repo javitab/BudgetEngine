@@ -2,4 +2,3 @@ pandas
 pymongo
 tabulate
 matplotlib
-bson
