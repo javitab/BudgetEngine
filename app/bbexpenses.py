@@ -1,5 +1,6 @@
 import bbdata as bb
 import pprint as pp
+from bson import ObjectId
 
 def insertExpense(acctID, DayOfMonth, Name, Amount, StartDate, EndDate):
     filter = {"Name":Name}
@@ -27,7 +28,8 @@ actions = [
     "3: Set LastPostedDate",
     "4: Create new expense",
     "5: Add end date to expense",
-    "6: Change amount"
+    "6: Change amount",
+    "7: Delete expense"
 ]
 
 def expMenu():
@@ -75,3 +77,11 @@ def expMenu():
             print("Expense selected: ",currExp.name)
             newAmount = float(input("Please enter the new amount for the expense (XX.XX) : "))
             currExp.changeAmount(newAmount)
+        if action == '7':
+            bb.printAsDataFrame(bb.listCollection('expenses'))
+            delExpID = input("Please enter the _id of the expense to be deleted: ")
+            deleteExpense(delExpID)
+
+def deleteExpense(delExpID):
+    x = bb.expenses.delete_one({"_id":ObjectId(delExpID)})
+    print(x.deleted_count, " documents deleted.")
