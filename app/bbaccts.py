@@ -71,14 +71,15 @@ def insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance):
         print("Account already exists, please review for validity")
     elif acctCheck < 1:
         print("Account does not exist. Will write to DB.")
-        accountToWrite = {
-        "Institution": NewAcctInst,
-        "Name": NewAcctName,
-        "CurrBalance": NewAcctBalance,
-        "LowBalance": NewAcctLowBalance
-        }
-        x = bb.accts.insert_one(accountToWrite)
-        print(x.inserted_id)
+        if (NewAcctName!=None) or (NewAcctInst!=None) or (NewAcctBalance!=None) or (NewAcctLowBalance!=None):
+            accountToWrite = {
+            "Institution": NewAcctInst,
+            "Name": NewAcctName,
+            "CurrBalance": NewAcctBalance,
+            "LowBalance": NewAcctLowBalance
+            }
+            x = bb.accts.insert_one(accountToWrite)
+            print(x.inserted_id)
 
 def deleteAcct(delAcctID):
     x = bb.accts.delete_one({"_id":ObjectId(delAcctID)})

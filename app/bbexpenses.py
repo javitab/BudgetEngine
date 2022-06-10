@@ -54,19 +54,23 @@ def expMenu():
             print("Please enter info for new expense:")
             bb.printAsDataFrame(bb.listCollection("accounts"))
             inputacctID = input("Please enter account: ")
-            inputName = input("Please enter name of new expense: ")
-            inputAmount = input("Please enter the amount: ")
-            AmountInt = float(inputAmount)
-            inputStartDate = input("Please enter a start date (YYYY-MM-DD): ")
-            StartDateFormatted = bb.convDate(inputStartDate)
-            DayOfMonth = StartDateFormatted.day
-            print("Interpreting DayOfMonth as %s from StartDate " % StartDateFormatted.day)
-            inputEndDate = input("Please enter the EndDate (if applicable): ")
-            if inputEndDate == "":
-                EndDateFormatted = None
-            elif inputEndDate != "":
-                EndDateFormatted = bb.convDate(inputEndDate)
-            insertExpense(inputacctID,DayOfMonth,inputName,AmountInt,StartDateFormatted,EndDateFormatted)
+            continueNewExpLoop = 1
+            while continueNewExpLoop == 1:
+                inputName = input("Please enter name of new expense: ")
+                inputAmount = input("Please enter the amount: ")
+                AmountInt = float(inputAmount)
+                inputStartDate = input("Please enter a start date (YYYY-MM-DD): ")
+                StartDateFormatted = bb.convDate(inputStartDate)
+                DayOfMonth = StartDateFormatted.day
+                print("Interpreting DayOfMonth as %s from StartDate " % StartDateFormatted.day)
+                inputEndDate = input("Please enter the EndDate (if applicable): ")
+                if inputEndDate == "":
+                    EndDateFormatted = None
+                elif inputEndDate != "":
+                    EndDateFormatted = bb.convDate(inputEndDate)
+                insertExpense(inputacctID,DayOfMonth,inputName,AmountInt,StartDateFormatted,EndDateFormatted)
+                if input("Another expense in same account? (y/n): ") not in ('y','Y'):
+                    continueNewExpLoop = 0
         if action == '5':
             currExp =  bb.expense(input("Please enter name of expense that you wish to modify: "))
             print("Expense selected: ",currExp.name)
