@@ -51,7 +51,7 @@ def acctMenu():
             print(projAcctInput,"account projected balance for",projEndInput,"will be $",proj[0])
             projDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (projAcctInput, proj[0])))
             plt.savefig('/projoutput/output.png')
-            print("Projection graph available at: http://%s:8080/output.png" % bb.extIP)
+            print("Projection graph available at: http://%s:8080/output.png" % bb.v.vars('HostExternalIP'))
         if action == '5':
             NewAcctName = input("Enter name for new account: ")
             NewAcctInst = input("Enter name of institution for new account: ")

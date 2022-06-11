@@ -12,8 +12,7 @@ from bson import ObjectId, json_util
 import os
 import bson
 import json
-
-extIP = os.environ.get('HOST_EXTERNAL_IP')
+import vars as v
 
 #connecting to db
 myclient = pymongo.MongoClient("mongodb://mongo:27017/")

@@ -28,8 +28,6 @@ services:
     volumes:
       - ./app:/app
       - ./projoutput:/projoutput
-    env_file: 
-      - .env
     ports:
       - 8181:81
   

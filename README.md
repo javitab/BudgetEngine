@@ -17,13 +17,9 @@ Python/MongoDB app that forecasts account balances based on current values and m
 
 Below are the steps to get started. The repository includes a sample dataset to demo the functionality.
 
-## env file
+## vars file
 
-The docker-compose.yml file takes values in from a .env file. Below is a sample file to create. The only value in use at this time is as listed below. It allows for an accurate URL to be displayed in the terminal output when running an account balance projection. Create an .env file as you see below, substituting with the appropriate value(s).
-
-```
-HOST_EXTERNAL_IP=127.0.0.1
-```
+The app/vars.py file takes install/environment-specific variables. This will come prefilled with 127.0.0.1, however, be sure to update with any values as appropriate.
 
 ## Build docker image
 
