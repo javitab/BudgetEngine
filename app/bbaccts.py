@@ -1,6 +1,7 @@
 import pymongo
 import pprint
 import bbdata as bb
+import bbposttx as bbt
 import matplotlib.pyplot as plt
 from bson import ObjectId
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -81,6 +82,7 @@ def insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance):
             }
             x = bb.accts.insert_one(accountToWrite)
             print(x.inserted_id)
+            bbt.CreateBlankTxLog(NewAcctName)
 
 def deleteAcct(delAcctID):
     x = bb.accts.delete_one({"_id":ObjectId(delAcctID)})
