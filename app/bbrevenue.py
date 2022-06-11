@@ -88,7 +88,7 @@ def insertRevenue(NewRevName, NewRevInst, NewRevAcct, NewRevAmount, NewRevFreq, 
         "Name": NewRevName,
         "EndDate": NewRevEnd,
         "ExclusionDates": [''],
-        "LastDatePosted": ''
+        "LastDatePosted": NewRevStartDate
         }
         x = bb.revenues.insert_one(revenueToWrite)
         print(x.inserted_id)
