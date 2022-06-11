@@ -54,8 +54,8 @@ def acctMenu():
         if action == '5':
             NewAcctName = input("Enter name for new account: ")
             NewAcctInst = input("Enter name of institution for new account: ")
-            NewAcctBalance = input("Enter current balance for new account: ")
-            NewAcctLowBalance = input("Enter low balance alert threshold for new account: ")
+            NewAcctBalance = float(input("Enter current balance for new account: "))
+            NewAcctLowBalance = float(input("Enter low balance alert threshold for new account: "))
             insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance)
         if action == '6':
             bb.printAsDataFrame(bb.listCollection('accounts'))
@@ -76,7 +76,8 @@ def insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance):
             "Institution": NewAcctInst,
             "Name": NewAcctName,
             "CurrBalance": NewAcctBalance,
-            "LowBalance": NewAcctLowBalance
+            "LowBalance": NewAcctLowBalance,
+            "TxLastPosted": None
             }
             x = bb.accts.insert_one(accountToWrite)
             print(x.inserted_id)

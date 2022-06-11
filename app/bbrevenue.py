@@ -56,7 +56,7 @@ def revMenu():
             NewRevName = input("Please input name for new revenue: ")
             NewRevInst = input("Please input name of Institution for new revenue: ")
             NewRevAcct = input("Please input account for new revnue: ")
-            NewRevAmount = input("Please input amount for new revenue: ")
+            NewRevAmount = float(input("Please input amount for new revenue: "))
             NewRevFreq = input("Please input frequency for new revenue: ")
             NewRevStartDate = input("Please input start date for new revenue (YYYY-MM-DD): ")
             NewRevStartDate = bb.convDate(NewRevStartDate)
@@ -86,7 +86,9 @@ def insertRevenue(NewRevName, NewRevInst, NewRevAcct, NewRevAmount, NewRevFreq, 
         "Amount": NewRevAmount,
         "StartDate": NewRevStartDate,
         "Name": NewRevName,
-        "EndDate": NewRevEnd
+        "EndDate": NewRevEnd,
+        "ExclusionDates": [''],
+        "LastDatePosted": ''
         }
         x = bb.revenues.insert_one(revenueToWrite)
         print(x.inserted_id)
