@@ -1,5 +1,6 @@
+"""This is a docstring"""
+
 import pymongo
-import pprint
 import bbdata as bb
 import bbposttx as bbt
 import matplotlib.pyplot as plt
@@ -24,8 +25,8 @@ actions = [
 
 
 def acctMenu():
+    """Defining account menu options"""
     continueAcctLoop = 1
-
     while continueAcctLoop == 1:
         action = bb.menuGen(actions,"Account menu",0)
         if action == '1':
@@ -40,8 +41,8 @@ def acctMenu():
             acctToUpdate = input("Please enter account to update: ")
             acct = bb.acct(acctToUpdate)
             print(acct.name,"has been selected")
-            NewLowBalance = float(input("Please enter new low balance alert level: (XXXX.XX)"))
-            acct.setLowBalAlertLevel(NewLowBalance)
+            newLowBalance = float(input("Please enter new low balance alert level: (XXXX.XX)"))
+            acct.setLowBalAlertLevel(newLowBalance)
         if action == '4':
             projEndInput = input("Enter end date for projection: ")
             projAcctInput = input("Enter account for projection: ")
@@ -51,13 +52,13 @@ def acctMenu():
             print(projAcctInput,"account projected balance for",projEndInput,"will be $",proj[0])
             projDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (projAcctInput, proj[0])))
             plt.savefig('/projoutput/output.png')
-            print("Projection graph available at: http://%s:8080/output.png" % bb.v.vars('HostExternalIP'))
+            print("Projection graph available at: http://%s:8080/output.png" % bb.v.envVars('HostExternalIP'))
         if action == '5':
-            NewAcctName = input("Enter name for new account: ")
-            NewAcctInst = input("Enter name of institution for new account: ")
-            NewAcctBalance = float(input("Enter current balance for new account: "))
-            NewAcctLowBalance = float(input("Enter low balance alert threshold for new account: "))
-            insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance)
+            newAcctName = input("Enter name for new account: ")
+            newAcctInst = input("Enter name of institution for new account: ")
+            newAcctBalance = float(input("Enter current balance for new account: "))
+            newAcctLowBalance = float(input("Enter low balance alert threshold for new account: "))
+            insertAccount(newAcctName, newAcctInst, newAcctBalance, newAcctLowBalance)
         if action == '6':
             bb.printAsDataFrame(bb.listCollection('accounts'))
             delAcctID = input("Enter _id for account to delete: ")
@@ -65,25 +66,27 @@ def acctMenu():
         if action == 'Q':
             continueAcctLoop = 0
 
-def insertAccount(NewAcctName, NewAcctInst, NewAcctBalance, NewAcctLowBalance):
-    filter = {"Name":NewAcctName}
-    acctCheck =  bb.accts.count_documents(filter, limit=1)
+def insertAccount(newAcctName, newAcctInst, newAcctBalance, newAcctLowBalance):
+    """Function to create a new account and generate blank TxLog"""
+    acctFilter = {"Name":newAcctName}
+    acctCheck =  bb.accts.count_documents(acctFilter, limit=1)
     if acctCheck == 1:
         print("Account already exists, please review for validity")
     elif acctCheck < 1:
         print("Account does not exist. Will write to DB.")
-        if (NewAcctName!=None) or (NewAcctInst!=None) or (NewAcctBalance!=None) or (NewAcctLowBalance!=None):
+        if (newAcctName!=None) or (newAcctInst!=None) or (newAcctBalance!=None) or (newAcctLowBalance!=None):
             accountToWrite = {
-            "Institution": NewAcctInst,
-            "Name": NewAcctName,
-            "CurrBalance": NewAcctBalance,
-            "LowBalance": NewAcctLowBalance,
+            "Institution": newAcctInst,
+            "Name": newAcctName,
+            "CurrBalance": newAcctBalance,
+            "LowBalance": newAcctLowBalance,
             "TxLastPosted": None
             }
             x = bb.accts.insert_one(accountToWrite)
             print(x.inserted_id)
-            bbt.CreateBlankTxLog(NewAcctName)
+            bbt.CreateBlankTxLog(newAcctName)
 
 def deleteAcct(delAcctID):
+    """Function to delete an account based on mongodb _id"""
     x = bb.accts.delete_one({"_id":ObjectId(delAcctID)})
     print(x.deleted_count, " documents deleted.")
