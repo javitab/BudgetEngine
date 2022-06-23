@@ -2,4 +2,4 @@ pandas
 pymongo
 tabulate
 matplotlib
-django
+flask
