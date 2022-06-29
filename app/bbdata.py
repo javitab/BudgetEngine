@@ -15,7 +15,7 @@ import json
 import vars as v
 
 #connecting to db
-myclient = pymongo.MongoClient("mongodb://mongo:27017/")
+myclient = pymongo.MongoClient(("mongodb://%s:27017/") % v.envVars("MongoDBIP"))
 bbdb = myclient["BudgetBalancer"]
 
 #defining collection cursors
