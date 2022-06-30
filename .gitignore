@@ -7,3 +7,4 @@ loadLocalData.sh
 .env
 .vscode
 venv
+BudgetBalancer.code-workspace

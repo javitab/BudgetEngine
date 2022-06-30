@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Accts{% endblock %}
+{% block content %}
+<h1>View transactions in account</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">_id</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">TxType</th>
+            <th scope="col">AdHoc</th>
+            <th scope="col">Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for i in txdata %}
+            <tr>
+                <td>{{i[0]}}</td>
+                <td>{{i[7]}}</td>
+                <td>{{i[1]}}</td>
+                <td>{{i[2]}}</td>
+                <td>{{i[3]}}</td>
+                <td>{{i[4]}}</td>
+                <td>{{i[5]}}</td>
+                <td>{{i[6]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+{% endblock %}

@@ -3,3 +3,4 @@ pymongo
 tabulate
 matplotlib
 flask
+flask-login
