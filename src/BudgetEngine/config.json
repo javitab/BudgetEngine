@@ -1,0 +1,5 @@
+{
+    "MongoDBIP": "localhost",
+    "MongoDBPort": "27107",
+    "HostExternalIP": "localhost"
+}
