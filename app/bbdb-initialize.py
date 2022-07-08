@@ -1,1 +1,0 @@
-#Initialize the expenses, revenues, accounts, and projections collections.

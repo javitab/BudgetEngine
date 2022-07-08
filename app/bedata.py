@@ -12,10 +12,10 @@ from bson import ObjectId, json_util
 import os
 import bson
 import json
-import vars as v
+from bevars import  *
 
 #connecting to db
-myclient = pymongo.MongoClient(("mongodb://%s:27017/") % v.envVars("MongoDBIP"))
+myclient = pymongo.MongoClient(("mongodb://%s:27017/") % envVars("MongoDBIP"))
 bbdb = myclient["BudgetBalancer"]
 
 #defining collection cursors
@@ -237,7 +237,7 @@ class acct:
         self.institution = self.data['Institution']
         self.name = self.data['Name']
         self.acctID = self.data['_id']
-        self.CurrBalance = self.data['CurrBalance']
+        self.CurrBalance = float(self.data['CurrBalance'])
         self.LowBalAlert = self.data['LowBalance']
         self.TxLastPosted = self.data['TxLastPosted']
     
@@ -248,6 +248,9 @@ class acct:
     def display(self):
         print("Acct name: ", self.name, end=', ')
         print("Acct Institution: $", self.institution, end=' ')
+
+    def name(self):
+        return self.name
     
     def expenses(self):
         "This function will list all expenses for the account"

@@ -1,8 +1,8 @@
-import bbdata as d
-import bbaccts as a
-import bbrevenue as r
-import bbexpenses as e
-import bbposttx as t
+from bedata import *
+from beaccts import *
+from berevenue import *
+from beexpenses import *
+from beposttx import *
 
 if __name__ == '__main__':
     continueAppMenu = 1
@@ -15,14 +15,14 @@ if __name__ == '__main__':
     ]
 
     while continueAppMenu == 1:
-        action = d.menuGen(actions,"Main Menu")
+        action = menuGen(actions,"Main Menu")
         if action == 'Q':
             continueAppMenu = 0
         if action == '1':
-            a.acctMenu()
+            acctMenu()
         if action == '2':
-            e.expMenu()
+            expMenu()
         if action == '3':
-            r.revMenu()
+            revMenu()
         if action == '4':
-            t.postTxMenu()
+            postTxMenu()

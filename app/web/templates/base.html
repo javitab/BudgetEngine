@@ -3,63 +3,71 @@
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1" >
-        <link
-          rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous"
-        />
-        <link
-          rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-          crossorigin="anonymous"
-        />
+        <!-- CSS only -->
+        <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
+        crossorigin="anonymous">
 
         <title>{% block title %}Home{% endblock %}</title>
     </head>
 
-<body> 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <button 
-        class="navbar-toggler" 
-        type="button" 
-        data-toggle="collapse" 
-        data-target="#navbar"
-        >
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-success">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" fill="currentColor" class="d-inline-block align-top" viewBox="0 0 16 16">
+            <path d="M8.277.084a.5.5 0 0 0-.554 0l-7.5 5A.5.5 0 0 0 .5 6h1.875v7H1.5a.5.5 0 0 0 0 1h13a.5.5 0 1 0 0-1h-.875V6H15.5a.5.5 0 0 0 .277-.916l-7.5-5zM12.375 6v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zM8 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM.5 15a.5.5 0 0 0 0 1h15a.5.5 0 1 0 0-1H.5z"/>
+          </svg>
+          BudgetEngine
+        </a>
+      </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" id="home" href="/">Home</a>
-                <a class="nav-item nav-link" id="signUp" href="/auth/sign-up">Sign Up</a>
+                <a class="nav-item nav-link" id="accts" href="/accts">Accounts</a>
+                <a class="nav-item nav-link" id="signUp" href="/auth/sign-up">Register</a>
                 <a class="nav-item nav-link" id="login" href="/auth/login">Login</a>
                 <a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a>
-                <a class="nav-item nav-link" id="logout" href="/accts">Accounts</a>
             </div>
     </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      {% if category == 'error' %}  
+      <div class="alert alert-danger alert-dismissable fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          
+        </button>
+      </div>
+        {% else %}
+        <div class="alert alert-success alert-dismissable fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            
+          </button>
+        </div>
+        {% endif %} 
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
     <div class="container">
       {% block content %}
       {% endblock %}
 
     </div>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" 
+            crossorigin="anonymous"></script>
+        
 
-
-
-        <script
-        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"
-      ></script>
+      
 </body>
 
 </html>
