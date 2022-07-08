@@ -12,18 +12,18 @@ from bson import ObjectId, json_util
 import os
 import bson
 import json
-from bevars import  *
+from BudgetEngine.bevars import *
 
 #connecting to db
 myclient = pymongo.MongoClient(("mongodb://%s:27017/") % envVars("MongoDBIP"))
-bbdb = myclient["BudgetBalancer"]
+bedb = myclient["BudgetEngine"]
 
 #defining collection cursors
-accts = bbdb["accounts"]
-expenses = bbdb["expenses"]
-revenues = bbdb["revenue"]
-projection = bbdb["projections"]
-postedtx = bbdb['postedtx']
+accts = bedb["accounts"]
+expenses = bedb["expenses"]
+revenues = bedb["revenue"]
+projection = bedb["projections"]
+postedtx = bedb['postedtx']
 
 #defining dates
 CurrDay = dt.datetime.today().day
@@ -87,12 +87,12 @@ def findExp(expName):
 
 def listCollection(collection):
     "This funtion returns the contents of an entire collection as input by name"
-    listColData = bbdb[collection]
+    listColData = bedb[collection]
     x = listColData.find()
     return x
 
 def printRecord(collection, name):
-    data = bbdb[collection].find({ 'Name': name})
+    data = bedb[collection].find({ 'Name': name})
     return data
 
 def getExpenses(acctName):

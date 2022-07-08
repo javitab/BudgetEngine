@@ -1,6 +1,6 @@
 from re import search
 from pandas.io import json
-import be 
+import BudgetEngine as BudgetEngine 
 import bson
 
 actions = [
@@ -15,67 +15,67 @@ def postTxMenu():
     continuePostLoop = 1
 
     while continuePostLoop == 1:
-        action = be.menuGen(actions,"Post Transactions Menu",0)
+        action = BudgetEngine.menuGen(actions,"Post Transactions Menu",0)
         if action == 'Q':
             continuePostLoop = 0
         if action == '1':
             print("View all posted transactions")
-            be.printAsDataFrame(be.listCollection("accounts"))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection("accounts"))
             acctName = input("What account would you like to get transactions for? ")
             output = getTxData(acctName)
-            dfTxData = be.mongoArrayDf(output,'PostedTxs')
-            be.printDf(dfTxData)
+            dfTxData = BudgetEngine.mongoArrayDf(output,'PostedTxs')
+            BudgetEngine.printDf(dfTxData)
         if action == '2':
             print("View all posted transacations since date, work in progress")
         if action == '3':
             print("Post transactions, work in progress")
-            be.printAsDataFrame(be.listCollection("accounts"))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection("accounts"))
             TxAccount = input("What account should the transaction be posted to? ")
-            currAcct = be.acct(TxAccount)
+            currAcct = BudgetEngine.acct(TxAccount)
             TxType = input("What type of transaction is this? (credit/debit) ")
             if TxType == 'credit':
-                be.printAsDataFrame(be.listRevenue(TxAccount))
+                BudgetEngine.printAsDataFrame(BudgetEngine.listRevenue(TxAccount))
                 KnownRev = input("Is the transaction in the above list? If yes, please enter name, else, enter AdHoc ({Enter Name}/ AdHoc ) ")
                 if KnownRev == 'AdHoc':
                     TxMemo = input("Please enter name of AdHoc transaction: ")
                     IsAdhoc = True
-                    TxDate = be.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
+                    TxDate = BudgetEngine.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
                     TxAmount = float(input("Please enter the amount of the transaction (XX.XX) "))
                 elif KnownRev != 'AdHoc':
                     IsAdhoc = False
                     revName = KnownRev
-                    currTx = be.revenue(revName)
+                    currTx = BudgetEngine.revenue(revName)
                     TxMemo = currTx.name
                     TxAmountConf = input("Is the transaction amount $%s (y/n) " % currTx.amount)
                     if TxAmountConf == 'y': TxAmount = currTx.amount
                     if TxAmountConf == 'n': TxAmount = float(input("Please enter the amount of the transaction (XX.XX) "))
-                    TxDateNext = be.txIterate(currTx.Frequency,currTx.LastDatePosted)
+                    TxDateNext = BudgetEngine.txIterate(currTx.Frequency,currTx.LastDatePosted)
                     TxDateConf = input("Is the date of the transaction %s?: (y/n)" % TxDateNext)
                     if TxDateConf == 'y': TxDate = TxDateNext
-                    if TxDateConf == 'n': TxDate = be.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
+                    if TxDateConf == 'n': TxDate = BudgetEngine.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
                     currTx.setLastPostedDate(TxDate)
                 NewBalance = currAcct.CurrBalance + TxAmount
                 currAcct.setCurrBalance(NewBalance)
             if TxType == 'debit':
-                be.printAsDataFrame(be.listExpenses(TxAccount))
+                BudgetEngine.printAsDataFrame(BudgetEngine.listExpenses(TxAccount))
                 KnownExp = input("Is the transaction in the above list? If yes, please enter name, else, enter AdHoc ({Enter Name}/ AdHoc ) ")
                 if KnownExp == 'AdHoc':
                     TxMemo = input("Please enter name of AdHoc transaction: ")
                     IsAdhoc = True
-                    TxDate = be.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
+                    TxDate = BudgetEngine.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
                     TxAmount = float(input("Please enter the amount of the transaction (XX.XX) "))
                 elif KnownExp != 'AdHoc':
                     IsAdhoc = False
                     expName = KnownExp
-                    currTx = be.expense(expName)
+                    currTx = BudgetEngine.expense(expName)
                     TxMemo = currTx.name
                     TxAmountConf = input("Is the transaction amount $%s (y/n) " % currTx.amount)
                     if TxAmountConf == 'y': TxAmount = currTx.amount
                     if TxAmountConf == 'n': TxAmount = float(input("Please enter the amount of the transaction (XX.XX) "))
-                    TxDateNext = be.txIterate('Monthly',currTx.LastPostedDate)
+                    TxDateNext = BudgetEngine.txIterate('Monthly',currTx.LastPostedDate)
                     TxDateConf = input("Is the date of the transaction %s?: (y/n)" % TxDateNext)
                     if TxDateConf == 'y': TxDate = TxDateNext
-                    if TxDateConf == 'n': TxDate = be.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
+                    if TxDateConf == 'n': TxDate = BudgetEngine.convDate(input("Please enter the date of the transaction (YYYY-MM-DD) "))
                     currTx.setLastPostedDate(TxDate)
                 NewBalance = round((currAcct.CurrBalance - TxAmount),2)
                 currAcct.setCurrBalance(NewBalance)
@@ -91,15 +91,15 @@ def postTxMenu():
             TxType = input("Please enter TxType to search (credit/debit) : ")
             Memo = input("Please enter Memo to search : ")
             output = searchTxData(acctName,Memo,TxType)
-            dfsearchTxData = be.mongoArrayDf(output,'PostedTxs')
-            be.printDf(dfsearchTxData)
+            dfsearchTxData = BudgetEngine.mongoArrayDf(output,'PostedTxs')
+            BudgetEngine.printDf(dfsearchTxData)
         
 
 
 def getTxData(acctName):
     "This function will get all transactions for a given account"
     #Get data for account
-    acctTxData = be.postedtx.aggregate([
+    acctTxData = BudgetEngine.postedtx.aggregate([
     {
         '$match': {
             'acctName': acctName
@@ -139,23 +139,23 @@ def writeTx(TxAccount,TxType,TxDate,TxAmount,TxMemo,IsAdhoc,TxBalance):
                 {   "txID": bson.ObjectId(),
                     "Memo": TxMemo,
                     "Amount": TxAmount,
-                    "Date": be.convDate(TxDate),
+                    "Date": BudgetEngine.convDate(TxDate),
                     "TxType": TxType,
                     "AdHoc": IsAdhoc,
                     "Balance": TxBalance
                 }}
         }
-    x = be.postedtx.update_one(postedTxAcctQuery,postedTxToWrite)
+    x = BudgetEngine.postedtx.update_one(postedTxAcctQuery,postedTxToWrite)
 
 def CreateBlankTxLog(acctName):
     "This function will create a blank transaction log if it does not already exist"
     filter = { "acctName": acctName }
-    TxLogCheck =  be.postedtx.count_documents(filter, limit=1)
+    TxLogCheck =  BudgetEngine.postedtx.count_documents(filter, limit=1)
     if TxLogCheck == 1:
         print("TxLog already exists, please review for validity")
     if TxLogCheck < 1:
         print("TxLog does not exist, creating.")
-        be.postedtx.insert_one(
+        BudgetEngine.postedtx.insert_one(
             {
                 "acctName": acctName
             }
@@ -163,7 +163,7 @@ def CreateBlankTxLog(acctName):
 
 def searchTxData(acctName,Memo,TxType):
     "This function will get all transactions in a given account matching a search on memo"
-    searchTxData = be.postedtx.aggregate([
+    searchTxData = BudgetEngine.postedtx.aggregate([
     {
         '$match': {
             'acctName': acctName

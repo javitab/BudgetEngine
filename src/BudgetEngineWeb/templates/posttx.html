@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Accts{% endblock %}
+
+
+{% block content %}
+<br>
+<h3>Viewing transactions in {{acct}}</h3>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#">{{acct}}</a>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Tx</a>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">New AdHoc</a></li>
+      <li><a class="dropdown-item" href="#">New Rev</a></li>
+      <li><a class="dropdown-item" href="#">New Exp</a></li>
+    </ul>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Accounts</a>
+    <ul class="dropdown-menu">
+      {% for i in accts %}
+      <li><a class="dropdown-item" href="/accts?acct={{i[3]}}">{{i[3]}}</a></li>
+      {%endfor%}
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">Create New Account</a></li>
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Revenue</a>
+    <ul class="dropdown-menu">
+        {% for i in revs %}
+        <li><a class="dropdown-item" href="#"></a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/rev">Create New Revenue</a></li>
+      </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle disabled" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Expenses</a>
+    <ul class="dropdown-menu">
+        {% for i in exps %}
+        <li><a class="dropdown-item" href="#"></a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Create New Expense</a></li>
+      </ul>
+  </li>
+  </li><li class="nav-item">
+    <a class="nav-link dropdown-toggle disabled" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Projections</a>
+    <ul class="dropdown-menu">
+        {% for i in projs %}
+        <li><a class="dropdown-item" href="#"></a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Create New Projection</a></li>
+      </ul>
+  </li> </li>
+
+</ul>
+<table class="table table-success table-striped-columns">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">_id</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">TxType</th>
+            <th scope="col">AdHoc</th>
+            <th scope="col">Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for i in txdata %}
+            <tr>
+                <td>{{i[0]}}</td>
+                <td>{{i[7]}}</td>
+                <td>{{i[1]}}</td>
+                {%if i[4]=="debit"%}
+                <td>{{"-$%.2f"|format(i[2])}}</td>
+                {%else%}
+                <td>{{"$%.2f"|format(i[2])}}</td>
+                {%endif%}
+                <td>{{i[3]}}</td>
+                <td>{{i[4]}}</td>
+                <td>{{i[5]}}</td>
+                <td>{{"$%.2f"|format(i[6])}}</td>
+            </tr>
+            {% endfor %}
+            <!--
+            <tr>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+            </tr>
+            <tr>
+              <form method="POST">
+              <td style="text-align:center">-</td>
+              <td style="text-align:center">-</td>
+              <td><input type="NewTxMemo" class="form-control" id="NewTxMemo" name="NewTxMemo" placeholder="Memo"/></td>
+              <td><input type="NewTxAmount" class="form-control" id="NewTxAmount" name="NewTxAmount" placeholder="Amount"/></td>
+              <td><input type="NewTxDate" class="form-control" id="NewTxDate" name="NewTxDate" placeholder="yyyy-mm-dd"/></td>
+              <td><input type="NewTxType" list="datalistTxType" class="form-select" id="NewTxType" name="NewTxType" placeholder="type"/>
+                <datalist id="datalistTxType">
+                    <option value="credit">
+                    <option value="debit">
+                </datalist></td>
+                <td><input type="NewTxAdhoc" list="datalistTxAdhoc" class="form-select" id="NewTxAdhoc" name="NewTxAdhoc" placeholder="AdHoc?"/>
+                  <datalist id="datalistTxAdhoc">
+                      <option value="yes">
+                      <option value="no">
+                  </datalist></td>
+              <td><button type="submit" class="btn btn-primary">Submit</button></td>
+            </form>
+            </tr>
+          -->
+        </tbody>
+</table>
+<!--
+<div class="dropdown">
+  <a class="btn btn-warning dropdown-toggle" href="#" role="button" id="NewTransaction" data-bs-toggle="dropdown" aria-expanded="false">
+    New Tx
+  </a>
+
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <li><a class="dropdown-item" href="/acct/post/adhoc?acct={{acct}}">New AdHoc</a></li>
+    <li><a class="dropdown-item" href="/acct/post/rev?acct={{acct}}">New Rev</a></li>
+    <li><a class="dropdown-item" href="/acct/post/exp?acct={{acct}}">New Exp</a></li>
+  </ul>
+</div>
+  -->
+{% endblock %}

@@ -1,7 +1,7 @@
 ##
 ##TODO: Model after be-importexpenses.py
 ##
-import be
+import BudgetEngine as BudgetEngine
 from bson import ObjectId
 
 revenueImport = [
@@ -12,7 +12,7 @@ revenueImport = [
     "Account": "Expense", 
     "Frequency": "Biweekly", 
     "Amount": 500, 
-    "StartDate": be.convDate("2021-8-19")
+    "StartDate": BudgetEngine.convDate("2021-8-19")
     
     }
 ]
@@ -30,28 +30,28 @@ actions = [
 def revMenu():
     continueRevLoop = 1
     while continueRevLoop == 1:
-        action = be.menuGen(actions,"Revenue menu",0)
+        action = BudgetEngine.menuGen(actions,"Revenue menu",0)
         if action == 'Q':
             continueRevLoop = 0
         if action == '1':
-            be.printAsDataFrame(be.listCollection("accounts"))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection("accounts"))
             inputacctID = input("Please enter account: ")
-            be.printAsDataFrame(be.listRevenue(inputacctID))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listRevenue(inputacctID))
         if action == '2':
-            be.printAsDataFrame(be.listCollection('revenue'))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection('revenue'))
         if action == '3':
             dateToExcludeinput = input("Please input date to exclude (YYY-MM-DD) : ")
             revName = input ("Please input name of revenue to add exclusion date to: ")
-            dateToExclude = be.convDate(dateToExcludeinput)
+            dateToExclude = BudgetEngine.convDate(dateToExcludeinput)
             query = {'Name': revName}
             addExclusionDate = { '$push': { 'ExclusionDates': dateToExclude}}
-            x = be.revenues.update_one(query, addExclusionDate)
+            x = BudgetEngine.revenues.update_one(query, addExclusionDate)
         if action == '4':
-            currRev = be.revenue(input("Please enter the name of the revenue you would like to update: "))
-            iterNextDate = be.txIterate(currRev.Frequency,currRev.LastDatePosted)
+            currRev = BudgetEngine.revenue(input("Please enter the name of the revenue you would like to update: "))
+            iterNextDate = BudgetEngine.txIterate(currRev.Frequency,currRev.LastDatePosted)
             newDateConf = input("Is the new LastPostedDate %s? (y/n)" % iterNextDate)
             if newDateConf == 'y': currRev.setLastPostedDate(iterNextDate)
-            if newDateConf == 'n': currRev.setLastPostedDate(be.convDate(input("Please enter the new LastPostedDate (YYYY-MM-DD)")))
+            if newDateConf == 'n': currRev.setLastPostedDate(BudgetEngine.convDate(input("Please enter the new LastPostedDate (YYYY-MM-DD)")))
         if action == '5':
             NewRevName = input("Please input name for new revenue: ")
             NewRevInst = input("Please input name of Institution for new revenue: ")
@@ -59,22 +59,22 @@ def revMenu():
             NewRevAmount = float(input("Please input amount for new revenue: "))
             NewRevFreq = input("Please input frequency for new revenue: ")
             NewRevStartDate = input("Please input start date for new revenue (YYYY-MM-DD): ")
-            NewRevStartDate = be.convDate(NewRevStartDate)
+            NewRevStartDate = BudgetEngine.convDate(NewRevStartDate)
             NewRevEnd = input("Please input end date for new revenue (YYYY-MM-DD): ")
             if NewRevEnd == "":
                 NewRevEnd = None
             else:
-                NewRevEnd = be.convDate(NewRevEnd)
+                NewRevEnd = BudgetEngine.convDate(NewRevEnd)
             insertRevenue(NewRevName, NewRevInst, NewRevAcct, NewRevAmount, NewRevFreq, NewRevStartDate, NewRevEnd)
         if action == '6':
-            be.printAsDataFrame(be.listCollection('revenue'))
+            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection('revenue'))
             delRevID = input("Please enter _id of revenue to delete: ")
             deleteRevenue(delRevID)
 
 
 def insertRevenue(NewRevName, NewRevInst, NewRevAcct, NewRevAmount, NewRevFreq, NewRevStartDate, NewRevEnd):
     filter = {"Name":NewRevName}
-    revCheck =  be.revenues.count_documents(filter, limit=1)
+    revCheck =  BudgetEngine.revenues.count_documents(filter, limit=1)
     if revCheck == 1:
         print("Revenue already exists, please review for validity")
     elif revCheck < 1:
@@ -90,9 +90,9 @@ def insertRevenue(NewRevName, NewRevInst, NewRevAcct, NewRevAmount, NewRevFreq, 
         "ExclusionDates": [''],
         "LastDatePosted": NewRevStartDate
         }
-        x = be.revenues.insert_one(revenueToWrite)
+        x = BudgetEngine.revenues.insert_one(revenueToWrite)
         print(x.inserted_id)
 
 def deleteRevenue(delRevID):
-    x = be.revenues.delete_one({"_id":ObjectId(delRevID)})
+    x = BudgetEngine.revenues.delete_one({"_id":ObjectId(delRevID)})
     print(x.deleted_count, " documents deleted.")

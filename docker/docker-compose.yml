@@ -4,7 +4,7 @@ services:
 
   mongo:
     image: mongo
-    container_name: bb_mongo
+    container_name: be_mongo
     networks:
       - app-tier
     volumes:
@@ -13,7 +13,7 @@ services:
       - 27017:27017
 
   python:
-    container_name: bb_python
+    container_name: be_python
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,7 +31,7 @@ services:
   
   web:
     image: nginx
-    container_name: bb_web
+    container_name: be_web
     ports:
       - 8080:80
     volumes:

@@ -1,8 +1,9 @@
-from bedata import *
-from beaccts import *
-from berevenue import *
-from beexpenses import *
-from beposttx import *
+from BudgetEngine import *
+from BudgetEngine.beaccts import *
+from BudgetEngine.bedata import *
+from BudgetEngine.berevenue import *
+from BudgetEngine.beexpenses import *
+from BudgetEngine.beposttx import *
 
 if __name__ == '__main__':
     continueAppMenu = 1
