@@ -1,7 +1,7 @@
 """This is a docstring"""
 
 import pymongo
-import BudgetEngine as BudgetEngine
+import BudgetEngine as be
 import matplotlib.pyplot as plt
 from bson import ObjectId
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -27,31 +27,31 @@ def acctMenu():
     """Defining account menu options"""
     continueAcctLoop = 1
     while continueAcctLoop == 1:
-        action = BudgetEngine.menuGen(actions,"Account menu",0)
+        action = be.menuGen(actions,"Account menu",0)
         if action == '1':
-            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection("accounts"))
+            be.printAsDataFrame(be.listCollection("accounts"))
         if action == '2':
             acctToUpdate = input("Please enter account to update: ")
-            acct = BudgetEngine.acct(acctToUpdate)
+            acct = be.acct(acctToUpdate)
             print(acct.name,"has been selected")
             newBalance = float(input("Please input new balance (XX.XX) : "))
             acct.setCurrBalance(newBalance)
         if action == '3':
             acctToUpdate = input("Please enter account to update: ")
-            acct = BudgetEngine.acct(acctToUpdate)
+            acct = be.acct(acctToUpdate)
             print(acct.name,"has been selected")
             newLowBalance = float(input("Please enter new low balance alert level: (XXXX.XX)"))
             acct.setLowBalAlertLevel(newLowBalance)
         if action == '4':
             projEndInput = input("Enter end date for projection: ")
             projAcctInput = input("Enter account for projection: ")
-            acct = BudgetEngine.acct(projAcctInput)
+            acct = be.acct(projAcctInput)
             proj = acct.projRev(projEndInput)
             projDf = proj[2]
             print(projAcctInput,"account projected balance for",projEndInput,"will be $",proj[0])
             projDf.plot(kind='line',x='Date',y='Balance',title=('%s account projected balances, $%s' % (projAcctInput, proj[0])))
             plt.savefig('/projoutput/output.png')
-            print("Projection graph available at: http://%s:8080/output.png" % BudgetEngine.v.envVars('HostExternalIP'))
+            print("Projection graph available at: http://%s:8080/output.png" % be.v.envVars('HostExternalIP'))
         if action == '5':
             newAcctName = input("Enter name for new account: ")
             newAcctInst = input("Enter name of institution for new account: ")
@@ -59,7 +59,7 @@ def acctMenu():
             newAcctLowBalance = float(input("Enter low balance alert threshold for new account: "))
             insertAccount(newAcctName, newAcctInst, newAcctBalance, newAcctLowBalance)
         if action == '6':
-            BudgetEngine.printAsDataFrame(BudgetEngine.listCollection('accounts'))
+            be.printAsDataFrame(be.listCollection('accounts'))
             delAcctID = input("Enter _id for account to delete: ")
             deleteAcct(delAcctID)
         if action == 'Q':
@@ -68,7 +68,7 @@ def acctMenu():
 def insertAccount(newAcctName, newAcctInst, newAcctBalance, newAcctLowBalance):
     """Function to create a new account and generate blank TxLog"""
     acctFilter = {"Name":newAcctName}
-    acctCheck =  BudgetEngine.accts.count_documents(acctFilter, limit=1)
+    acctCheck =  be.accts.count_documents(acctFilter, limit=1)
     if acctCheck == 1:
         print("Account already exists, please review for validity")
     elif acctCheck < 1:
@@ -81,11 +81,11 @@ def insertAccount(newAcctName, newAcctInst, newAcctBalance, newAcctLowBalance):
             "LowBalance": newAcctLowBalance,
             "TxLastPosted": None
             }
-            x = BudgetEngine.accts.insert_one(accountToWrite)
+            x = be.accts.insert_one(accountToWrite)
             print(x.inserted_id)
-            BudgetEngine.CreateBlankTxLog(newAcctName)
+            be.CreateBlankTxLog(newAcctName)
 
 def deleteAcct(delAcctID):
     """Function to delete an account based on mongodb _id"""
-    x = BudgetEngine.accts.delete_one({"_id":ObjectId(delAcctID)})
+    x = be.accts.delete_one({"_id":ObjectId(delAcctID)})
     print(x.deleted_count, " documents deleted.")
