@@ -1,6 +1,7 @@
 db/
 .DS_Store
 projoutput/
+prod/
 app/__pycache__/
 *.pyc
 loadLocalData.sh
