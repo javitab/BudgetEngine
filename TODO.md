@@ -6,10 +6,10 @@ Updating backend to more consistently utilize classes for consuming and updating
 
 ### Tasks
 
-[X] data module
-[X] user module
-[X] acct module
-[ ] revenue module
-[ ] expense module
-[ ] posttx module
-[ ] projections module
+##[X] data module
+##[X] user module
+##[X] acct module
+##[ ] revenue module
+##[ ] expense module
+##[ ] posttx module
+##[ ] projections module
