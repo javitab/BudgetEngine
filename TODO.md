@@ -9,9 +9,9 @@ Updating backend to more consistently utilize classes for consuming and updating
 ## ✅ data module
 ## ✅ user module
 ## ✅ acct module
+## ✅ GPG Signatures
 ## 🟡 revenue module
 ## 🟡 expense module
 ## 🟡 posttx module
-## 🟡 Get GPG Working
 ## ☑️ projections module
 ## ☑️ Update README.md
