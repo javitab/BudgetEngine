@@ -12,6 +12,5 @@ Updating backend to more consistently utilize classes for consuming and updating
 ## 🟡 revenue module
 ## 🟡 expense module
 ## 🟡 posttx module
-## 🟡 Get GPG Keys working
 ## ☑️ projections module
 ## ☑️ Update README.md
