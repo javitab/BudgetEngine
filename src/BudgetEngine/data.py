@@ -3,6 +3,7 @@
 
 import array
 from ctypes import Array
+from tokenize import Double
 import pymongo
 import datetime as dt
 import calendar as cal
@@ -10,9 +11,10 @@ from dateutil.relativedelta import relativedelta
 import os
 import bson
 import json
+import BudgetEngine.config as config
 
-import config
-
+#getting environment variables
+evars = config.Vars()
 #defining verbose function
 verboseON=0
 
@@ -23,7 +25,7 @@ def verbose(object):
         pass
 
 #connecting to db
-dbhostcon = pymongo.MongoClient(("mongodb://%s:%s/") % config.MongoDBIP ,config.MongoDBPort)
+dbhostcon = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
 bedb = dbhostcon["BudgetEngine"]
 
 #defining collection cursors
@@ -35,20 +37,50 @@ col_postedtxs = bedb["postedtxs"]
 col_users = bedb["users"]
 
 #defining dates
-def dtfunc(period: str, component: str):
+def dtfunc(period,component,fmt='dt'):
     """compiles various common date strings for use
 
     Args:
-        period (str): Options: [today],[current]
-        component (str): Options: [fulldate],[day],[month],[year],[last_day_month],[last_date_month],[first_day_month]
+        period (str): Options: 
+            [today],
+                component (str): Options:
+                    ['fulldate'],
+                    ['day'],
+                    ['month'],
+                    ['year']
+            [current]
+                component (str): Options: 
+                    ['last_day_month'],
+                    ['last_date_month'],
+                    ['first_day_month']
+        output(float): Options:
+            ['dt'],
+            ['str']
     """
-    if period=="today" or period=="current" and component=="fulldate": return dt.datetime(dtfunc('current','year'), dtfunc('current','month'), dtfunc('current','day'))
-    if period=="today" or period=="current"  and component=="day": return dt.datetime.today().day
-    if period=="today" or period=="current"  and component=="month": return dt.datetime.today().month
-    if period=="today" or period=="current"  and component=="year": return dt.datetime.today().year
-    if period=="current" and component=="last_day_month": return cal.monthrange(dtfunc('current','year'),dtfunc('current','month'))[1]
-    if period=="current" and component=="last_date_month": return dt.datetime(dtfunc('current','year'),dtfunc('current','month'),dtfunc('current','last_day_month'))
-    if period=="current" and component=="first_date_month": return dt.datetime(dtfunc('current','year'),dtfunc('current','month'),1)
+    if period=="today":
+        if component=="fulldate":
+            dateout = dt.datetime(dt.datetime.today().year, dt.datetime.today().month, dt.datetime.today().day)
+        if component=="day":
+            dateout = dt.datetime.today().day
+        if component=="month":
+            dateout = dt.datetime.today().month
+        if component=="year":
+            dateout = dt.datetime.today().year
+    
+    if period=="current":
+        if component=="last_day_month":
+            dateout = cal.monthrange(dtfunc('current','year'),dtfunc('current','month'))[1]
+        if component=="last_date_month":
+            dateout = dt.datetime(dtfunc('current','year'),dtfunc('current','month'),dtfunc('current','last_day_month'))
+        if component=="first_date_month":
+            dateout = dt.datetime(dtfunc('current','year'),dtfunc('current','month'),1)
+    
+    if fmt=='str':
+        return dateout.strftime('%Y-%m-%d')
+    if fmt=='int':
+        return int(dateout.strftime('%Y%m%d'))
+    else:
+        return dt.datetime.strptime(dateout.strftime('%Y-%m-%d'), '%Y-%m-%d')
 
 def convDate(inputdate: str):
     """This function takes an input of a string and formats as a datetime value and strips the time
@@ -66,7 +98,11 @@ def txIterate(frequency: int, inputdate: dt.date):
     """Given a frequency and input date, this function will calculate the next date based on the frequency
 
     Args:
-        frequency (int): [1: biweekly],[2: weekly],[3: monthly],[4: daily]
+        frequency (int): 
+            [1: biweekly],
+            [2: weekly],
+            [3: monthly],
+            [4: daily]
         inputdate (dt.date): input date as datetime object
 
     Returns:
@@ -82,16 +118,17 @@ def txIterate(frequency: int, inputdate: dt.date):
 
 #defining how to handle monies
 
-def NiceMoney(input):
-    """Will take any string, convert to double, round to 2 decimals, force to 
+def nm(input: float):
+    """NiceMoney, takes a float input, rounds to 2 decimal places, returns as float
 
     Args:
-        input (_type_): _description_
+        input (float): input numerical value
 
     Returns:
-        float: _description_
+        float: return float rounded to .00
     """
-    
+    x = round(input,2)
+    return x
 
 #defining internal functions
 def cls():

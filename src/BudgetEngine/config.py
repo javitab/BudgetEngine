@@ -1,14 +1,16 @@
-"""Declaring variables"""
+import os
 
-#Declaring Variables - fill in any variables as neccessary
+while os.path.exists('config.json') == False:
+    path_parent = os.path.dirname(os.getcwd())
+    os.chdir(path_parent)
 
-def config_read():
-    filename = 'config.json'
-    contents = open(filename).read()
-    config = eval(contents)
-    MongoDBIP = config['MongoDBIP']
-    MongoDBPort = config['MongoDBPort']
-    HostExternalIP = config['HostExternalIP']
 
-if __name__ == "__main__":
-    config_read()
+class Vars:
+    
+    def __init__(self):
+        filename = 'config.json'
+        contents = open(filename).read()
+        config = eval(contents)
+        self.MongoDBIP = config['MongoDBIP']
+        self.MongoDBPort = config['MongoDBPort']
+        self.HostExternalIP = config['HostExternalIP']
