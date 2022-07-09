@@ -33,7 +33,6 @@ if __name__ == '__main__':
     print(type(today_date))
     print(type(today_string))
 
-    #test_run_id = ("%s%s" % d.dtfunc('today','fulldate','str'),str(random.randrange(111,999)))
     test_run_id = concat(d.dtfunc('today','fulldate','str'),str(random.randrange(111,999)))
     print(type(random.randrange(111,999)))
     print(test_run_id)
