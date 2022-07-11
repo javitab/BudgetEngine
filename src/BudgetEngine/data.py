@@ -15,6 +15,7 @@ import BudgetEngine.config as config
 
 #getting environment variables
 evars = config.Vars()
+
 #defining verbose function
 verboseON=0
 
@@ -26,7 +27,7 @@ def verbose(object):
 
 #connecting to db
 dbhostcon = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
-bedb = dbhostcon["BudgetEngine"]
+bedb = dbhostcon[evars.DBName]
 
 #defining collection cursors
 col_accounts = bedb["accounts"]

@@ -14,3 +14,4 @@ class Vars:
         self.MongoDBIP = config['MongoDBIP']
         self.MongoDBPort = config['MongoDBPort']
         self.HostExternalIP = config['HostExternalIP']
+        self.DBName = config['DBName']
