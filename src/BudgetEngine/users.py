@@ -9,13 +9,14 @@ class User:
     """acct class for creating new and updating existing accounts
     """
     def __init__(self, oid):
-        self.data = data.col_users.find_one({'_id':oid})
+        self.data = data.bedb['users'].find_one({'_id':oid})
         self.id = self.data['_id']
         self.userid = self.data['userid']
         self.email = self.data['email']
         self.first_name = self.data['first_name']
         self.last_name = self.data['last_name']
         self.password = self.data['password']
+        self.timezone = self.data['timezone']
         self.acctIds = self.getAcctIds
     
     def reset(self):
@@ -23,7 +24,7 @@ class User:
         """
         self.__init__(self.id)
     
-    def create(userid: str, email: str, first_name: str, last_name: str, password: str):
+    def create(userid: str, email: str, first_name: str, last_name: str, password: str, timezone: str):
         """Create new user account after confirming no conflicts
 
         Args:
@@ -32,10 +33,11 @@ class User:
             first_name (str): users's First Name
             last_name (str): user's Last Name
             password (str): users' hashed password
+            timezone (str): user's timezone
         """
-        if data.col_users.count_documents({"userid":userid}, limit=1) > 0:
+        if data.bedb['users'].count_documents({"userid":userid}, limit=1) > 0:
             return "Error: UserID already in use"
-        elif data.col_users.count_documents({"email":email}, limit=1) > 0:
+        elif data.bedb['users'].count_documents({"email":email}, limit=1) > 0:
             return "Error: Email already in use"
         else:
             new_user={
@@ -43,9 +45,10 @@ class User:
                 "email": email,
                 "first_name": first_name,
                 "last_name": last_name,
-                "password": password
+                "password": password,
+                "timezone": timezone
             }
-            x = data.col_users.insert_one(new_user)
+            x = data.bedb['users'].insert_one(new_user)
             if x.inserted_id == None:
                 return "DB Error: Account not created"
             if x.inserted_id != None:
@@ -61,7 +64,7 @@ class User:
         acct_Ids = {'$push':
             {
             'acctIds': ObjectId(acct_id)}}
-        x = data.col_users.update_one(acct_filter,acct_Ids)
+        x = data.bedb['users'].update_one(acct_filter,acct_Ids)
         return x
 
     def getAcctIds(self):

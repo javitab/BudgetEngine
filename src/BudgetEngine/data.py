@@ -26,16 +26,22 @@ def verbose(object):
         pass
 
 #connecting to db
-dbhostcon = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
-bedb = dbhostcon[evars.DBName]
+dbclient = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
+bedbcurs = dbclient[evars.DBName]
 
 #defining collection cursors
-col_accounts = bedb["accounts"]
-col_expenses = bedb["expenses"]
-col_revenues = bedb["revenues"]
-col_projections = bedb["projections"]
-col_postedtxs = bedb["postedtxs"]
-col_users = bedb["users"]
+
+collections=['accounts','expenses','revenues','projections','transactions','users']
+bedb={}
+for i in collections:
+    bedb[i] = bedbcurs[i]
+    if bedb[i].count_documents({},limit=1) < 1:
+        bedb[i].insert_one({
+            'init_record': True,
+            'init_time': dt.datetime.utcnow()
+        })
+
+
 
 #defining dates
 def dtfunc(period,component,fmt='dt'):

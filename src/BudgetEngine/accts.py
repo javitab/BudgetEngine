@@ -1,17 +1,24 @@
 """
 Module for acct data model
+    general account creation, maintenance, etc.
+    also contains class for the txLog associated with the acct
+        (transaction data model is in tx module)
 """
 from datetime import date
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import BudgetEngine as be
 import BudgetEngine.data as data
 import BudgetEngine.users as u
+import BudgetEngine.tx as t
 from bson import ObjectId
 
 class Acct:
     """acct class for creating new and updating existing accounts
     """
     def __init__(self, oid):
-        self.data = data.col_accounts.find_one({'_id':oid})
+        self.data = data.bedb['accounts'].find_one({'_id':oid})
         self.id = self.data['_id']
         self.bank_name = self.data['bank_name']
         self.bank_routing_number = self.data['bank_routing_number']
@@ -22,6 +29,7 @@ class Acct:
         self.tx_last_posted = self.data['tx_last_posted']
         self.rev_ids = self.getRevIds
         self.exp_ids = self.getExpIds
+        self.ptx_log_id = self.getPtxLogId
     
     
     def reset(self):
@@ -34,7 +42,7 @@ class Acct:
         """
         if new_balance == None:
             new_balance=data.NiceMoney(input)
-            data.col_accounts.update_one(
+            data.bedb['accounts'].update_one(
                 { '_id': self.id},
                 { '$set':
                     {
@@ -48,7 +56,7 @@ class Acct:
         """
         if tx_last_posted == None:
             pass
-            data.col_accounts.update_one(
+            data.bedb['accounts'].update_one(
                 { '_id': self.id},
                 { '$set':
                     {
@@ -70,7 +78,7 @@ class Acct:
             current_balance (_type_, optional): updated by postedtx
             tx_last_posted (_type_, optional): updated by postedtx
         """
-        if (data.col_accounts.count_documents({"bank_account_number":bank_account_number}, limit=1) > 0) and (data.col_accounts.count_documents({"bank_routing_number":bank_routing_number}, limit=1) > 0):
+        if (data.bedb['accounts'].count_documents({"bank_account_number":bank_account_number}, limit=1) > 0) and (data.bedb['accounts'].count_documents({"bank_routing_number":bank_routing_number}, limit=1) > 0):
             return "Error: account with same bank_account_number and bank_routing_number already exists"
         else:
             new_acct = {
@@ -82,7 +90,7 @@ class Acct:
                 "current_balance": current_balance,
                 "tx_last_posted": tx_last_posted
                 }
-            x = data.col_accounts.insert_one(new_acct)
+            x = data.bedb['accounts'].insert_one(new_acct)
             if x.inserted_id == None: return "DB Error: Account not created"
             if x.inserted_id != None: 
                 be.u.User(ObjectId(owning_user)).addAcctIds(x.inserted_id)
@@ -98,7 +106,7 @@ class Acct:
         rev_Ids = {'$push':
             {
               'revIds': ObjectId(rev_id)}}
-        x = data.col_accounts.update_one(acct_filter,rev_Ids)
+        x = data.bedb['accounts'].update_one(acct_filter,rev_Ids)
         self.reset()
         return x
 
@@ -106,8 +114,10 @@ class Acct:
         """Gets subarray of revIds that are associated with this account
         """
         revIds_array = []
+        revIds_array_len = 0
         for i in self.data['revIds']:
           revIds_array.append(i)
+          revIds_array_len+1
         return revIds_array
 
     def addExpIds(self,exp_id):
@@ -120,7 +130,7 @@ class Acct:
         exp_Ids = {'$push':
             {
               'expIds': ObjectId(exp_id)}}
-        x = data.col_accounts.update_one(acct_filter,exp_Ids)
+        x = data.bedb['accounts'].update_one(acct_filter,exp_Ids)
         self.reset()
         return x
 
@@ -131,5 +141,20 @@ class Acct:
         for i in self.data['expIds']:
             expIds_array.append(i)
         return expIds_array
-
     
+    def getPtxLogId(self):
+        """Checks if a ptxLog exists, if it does, it returns the ptxLogId
+            if a ptxLogId does not exist, will create one and return the _id
+        """
+        try:
+            return self.data['ptx_log_id']
+        except:
+            #If no ID exists, create new log
+            acct_filter = {"_id": self.id}
+            ptx_log_id={'$set':
+            {
+                'ptx_log_id': ObjectId("62c8f237ed0befd90364b6b6")
+            }}
+            x = data.bedb['accounts'].update_one(acct_filter,ptx_log_id)
+            self.reset()
+            return x
