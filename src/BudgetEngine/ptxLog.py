@@ -10,9 +10,9 @@ import BudgetEngine as be
 from BudgetEngine.accts import *
 
 
-class postTx:
+class ptxLog:
     """
-    postTx class for creating and modifying transactions
+    ptxLog class for creating and modifying posted transaction logs
     """
     def __init__(self, oid):
         self.rawdata = data.bedb['transactions'].aggregate([
@@ -65,21 +65,34 @@ class postTx:
         """
         self.__init__(self.id)
     
-    def writePtx(memo: str,amount: float,date: datetime,tx_type: int,ad_hoc: False,balance: float,seq=None,categories=None):
+    def create(self):
+        """
+        Creates new ptxlog, updates acct
+        """
+    
+    def writePtx(ptx_log_id: ObjectId,memo: str,amount: float,date: datetime,tx_type: int,ad_hoc: False,balance: float,seq=None,categories=None):
         """
         Posts a transaction to the txLog
         """
         if categories==None:
             categories=[]
-        tx_to_write={'$push':
-            {'PostedTxs':
-                {'txID': ObjectId(),
-                'memo': 'memo',
-                'amount': 'amount',
-                'date': 'date',
-                'tx_type': 'tx_type',
-                'ad_hoc': 'ad_hoc',
-                'balance': 'balance',
-                'categories': 'categories'}}
-                }
-        
+        if seq==None:
+            #Calculate value for sequence
+            data.bedb['transactions'].update(
+                {"_id": ptx_log_id},
+                {'$inc': {'last_seq': 1}} )
+            newSeq=data.bedb['transactions'].find({'_id': ptx_log_id}).select('last_seq')
+        tx_to_write = {'$push':
+        {'PostedTxs':
+            {'txID': ObjectId(),
+            'seq': newSeq,
+            'memo': 'memo',
+            'amount': 'amount',
+            'date': 'date',
+            'tx_type': 'tx_type',
+            'ad_hoc': 'ad_hoc',
+            'balance': 'balance',
+            'categories': 'categories'}}
+            }
+        x = data.bedb['transactions'].update_one
+

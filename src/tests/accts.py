@@ -1,5 +1,7 @@
 import sys
 from os import path
+
+
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 import random
@@ -7,6 +9,8 @@ from operator import concat
 from bson import ObjectId
 
 from BudgetEngine import accts,data
+from testfx import *
+
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -14,6 +18,7 @@ if __name__ == '__main__':
         from os import path
         sys.path.append( path.dirname( path.dirname( path.abspath(__file__))))
         from BudgetEngine import *
+        
 
     ###
     ### Declaring test_run_id and test_bank_name to identify testing runs
@@ -35,9 +40,9 @@ if __name__ == '__main__':
         testUser = u.User(standard_user_creation)
         print("Current UserID: ",testUser.userid)
         print("Current _id: ",testUser.id)
-        print("[*Test Passed*] standard_user_creation succeeded")
+        test(name="standard_user_creation",test=1,outcome=True)
     except:
-        print("[#Test Failed#] standard_user_creation did not succeed")
+        test(name="standard_user_creation",test=1,outcome=False)
     
 
     ###
@@ -55,16 +60,16 @@ if __name__ == '__main__':
     #Create First Account
     first_account_creation = accts.Acct.create(bank_name=test_bank_name, account_display_name=first_account_display_name, owning_user=standard_user_creation, low_balance_alert=100.00, bank_routing_number=first_bank_routing_number, bank_account_number=first_bank_account_number)
     if type(first_account_creation)==ObjectId:
-        print("[*Test Passed*] first_account_creation successful")
+        test(name="first_account_creation",test=1,outcome=True)
     else:
-        print("[#Test Failed#] first_account_creation failed")
+        test(name="first_account_creation",test=1,outcome=False)
     
     #Attempt Duplicate Account Creation
     first_duplicate_account_creation = accts.Acct.create(bank_name=test_bank_name, account_display_name=first_account_display_name, owning_user=standard_user_creation, low_balance_alert=100.00, bank_routing_number=first_bank_routing_number, bank_account_number=first_bank_account_number)
     if first_duplicate_account_creation=='Error: account with same bank_account_number and bank_routing_number already exists':
-        print("[*Test Passed*] Failed Successfully: Unable to create duplicate account")
+        test(name="first_duplicate_account_creation",test=2,outcome=True)
     else:
-        print(first_duplicate_account_creation)
+        test(name="first_duplicate_account_creation",test=2,outcome=False)
 
     #Create Account with missing_bank_name
     try:
@@ -75,7 +80,7 @@ if __name__ == '__main__':
         missing_bank_name_account_creation = accts.Acct.create(account_display_name=missing_bank_name_account_display_name, owning_user=standard_user_creation, low_balance_alert=100.00, bank_routing_number=missing_bank_name_bank_routing_number, bank_account_number=missing_bank_name_bank_account_number)
         print(missing_bank_name_account_creation)
     except:
-        print("[*Test Passed*] Failed Successfully: Unable to create account with missing bank name")
+        test(name="missing_bank_name",test=2,outcome=True)
     #Create Account with missing_account_display_name
     try:
         missing_account_display_name_bank_routing_number = random.randrange(1000000,9999999)
@@ -85,7 +90,7 @@ if __name__ == '__main__':
         missing_account_display_name_account_creation = accts.Acct.create(bank_name=test_bank_name, owning_user=standard_user_creation, low_balance_alert=100.00, bank_routing_number=missing_account_display_name_bank_routing_number, bank_account_number=missing_account_display_name_bank_account_number)
         print(missing_account_display_name_account_creation)
     except:
-        print("[*Test Passed*] Failed Successfully: Unable to create account with missing acccount display name")
+        test(name="missing_account_display",test=2,outcome=True)
     #Create Account with missing_low_balance_alert
     try:
         missing_low_balance_alert_bank_routing_number = random.randrange(1000000,9999999)
@@ -95,7 +100,7 @@ if __name__ == '__main__':
         missing_low_balance_alert_account_creation = accts.Acct.create(bank_name=test_bank_name, owning_user=standard_user_creation, missing_low_balance_alert_account_display_name=missing_low_balance_alert_account_display_name,bank_routing_number=missing_low_balance_alert_bank_routing_number, bank_account_number=missing_low_balance_alert_bank_account_number)
         print(missing_low_balance_alert_account_creation)
     except:
-        print("[*Test Passed*] Failed Successfully: Unable to create account with missing low balance alert level")
+        test(name="missing_low_balance_alert",test=2,outcome=True)
     
 
     
@@ -124,9 +129,9 @@ if __name__ == '__main__':
     for i in testAcctRevIds.rev_ids():
         rev_ids_total = rev_ids_total + 1
     if rev_ids_total==4:
-        print("[*Test Passed*] %s revIds found in %s" % (rev_ids_total,testAcctRevIds.id)) 
+        test(name="push_revIds_array",test=1,outcome=True)
     else:
-        print("[#Test Failed#] %s revIds found in %s" % (rev_ids_total,testAcctRevIds.id))
+        test(name="push_revIds_array",test=1,outcome=False)
 
     
     #Create Account with push_ExpIds_array
@@ -145,8 +150,7 @@ if __name__ == '__main__':
     for i in testAcctExpIds.exp_ids():
         exp_ids_total = exp_ids_total + 1
     if exp_ids_total==4:
-        print("[*Test Passed*] %s expIds found in %s" % (exp_ids_total,testAcctExpIds.id)) 
+        test(name="push_expIds_array",test=1,outcome=True)
     else:
-        print("[#Test Failed#] %s expIds found in %s" % (exp_ids_total,testAcctExpIds.id))
-
-    
+        test(name="push_expIds_array",test=1,outcome=False)
+        

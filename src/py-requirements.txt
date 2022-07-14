@@ -4,3 +4,4 @@ tabulate
 matplotlib
 flask
 flask-login
+termcolor

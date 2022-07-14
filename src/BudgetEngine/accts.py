@@ -4,9 +4,7 @@ Module for acct data model
     also contains class for the txLog associated with the acct
         (transaction data model is in tx module)
 """
-from datetime import date
-
-from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 import BudgetEngine as be
 import BudgetEngine.data as data
@@ -51,7 +49,7 @@ class Acct:
                 )
         self.reset(self)
 
-    def setTxLastPosted(self, tx_last_posted: date):
+    def setTxLastPosted(self, tx_last_posted: datetime):
         """Sets the accounts current balance without transactions
         """
         if tx_last_posted == None:
@@ -92,7 +90,8 @@ class Acct:
                 }
             x = data.bedb['accounts'].insert_one(new_acct)
             if x.inserted_id == None: return "DB Error: Account not created"
-            if x.inserted_id != None: 
+            if x.inserted_id != None:
+                 
                 be.u.User(ObjectId(owning_user)).addAcctIds(x.inserted_id)
                 return x.inserted_id
 
@@ -133,7 +132,19 @@ class Acct:
         x = data.bedb['accounts'].update_one(acct_filter,exp_Ids)
         self.reset()
         return x
+    def addRevIds(self,rev_id):
+        """This function will add to a list of revenue that are associated with an account by revenue _id
 
+        Args:
+            rev_id (ObjectId): ObjectId of revenue record
+        """
+        acct_filter = {"_id": self.id}
+        rev_Ids = {'$push':
+            {
+              'revIds': ObjectId(rev_id)}}
+        x = data.bedb['accounts'].update_one(acct_filter,rev_Ids)
+        self.reset()
+        return x
     def getExpIds(self):
         """Gets subarray of expIds that are associated with this account
         """
@@ -158,3 +169,20 @@ class Acct:
             x = data.bedb['accounts'].update_one(acct_filter,ptx_log_id)
             self.reset()
             return x
+    def createExp(self, expense_display_name: str,start_date: datetime,end_date: datetime,frequency: int,amount=0.00):
+        """calls to the Exp class to create a new expense
+        """
+        try:
+            x = be.e.Exp.create(linked_account=self.id,expense_display_name=expense_display_name,start_date=start_date,end_date=end_date,frequency=frequency,amount=amount)
+            return x
+        except:
+            return "Unable to create expense from Acct class"
+
+    def createRev(self, revenue_display_name: str,start_date: datetime,end_date: datetime,frequency: int,amount=0.00):
+        """calls to the Rev class to create a new revenue
+        """
+        try:
+            x = be.r.Rev.create(linked_account=self.id,revenue_display_name=revenue_display_name,start_date=start_date,end_date=end_date,frequency=frequency,amount=amount)
+            return x
+        except:
+            return "Unable to create revenue from Acct class"

@@ -1,4 +1,5 @@
-"""Initiating connection to database and pulling base dependencies
+"""
+Initiating connection to database and pulling base dependencies
 """
 
 import array
@@ -12,6 +13,7 @@ import os
 import bson
 import json
 import BudgetEngine.config as config
+import pandas as pd
 
 #getting environment variables
 evars = config.Vars()
@@ -31,7 +33,7 @@ bedbcurs = dbclient[evars.DBName]
 
 #defining collection cursors
 
-collections=['accounts','expenses','revenues','projections','transactions','users']
+collections=['accounts','expenses','revenue','projections','transactions','users']
 bedb={}
 for i in collections:
     bedb[i] = bedbcurs[i]

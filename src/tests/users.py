@@ -7,6 +7,7 @@ from operator import concat
 from bson import ObjectId
 
 from BudgetEngine import users,data
+from testfx import *
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -14,6 +15,7 @@ if __name__ == '__main__':
         from os import path
         sys.path.append( path.dirname( path.dirname( path.abspath(__file__))))
         from BudgetEngine import *
+        from testfx import *
     
     ###
     ###Testing Account Creation
@@ -31,17 +33,17 @@ if __name__ == '__main__':
 
         
 
-        standard_user_creation = u.User.create(userid=standard_user_creation_userid,email=standard_user_creation_email,first_name=standard_user_creation_first_name,last_name=standard_user_creation_last_name,password=standard_user_creation_password)
+        standard_user_creation = u.User.create(userid=standard_user_creation_userid,email=standard_user_creation_email,first_name=standard_user_creation_first_name,last_name=standard_user_creation_last_name,password=standard_user_creation_password,timezone="US/Eastern")
         print(standard_user_creation)
         testUser = u.User(standard_user_creation)
         print("Current UserID: ",testUser.userid)
         print("Current _id: ",testUser.id)
         
         for i in ['62c8f237ed0befd90364b6b6','62c8f26271eeb79862d9f479','62a2c4875d353495c3c3ecee','62c8f237ed0befd90364b6b5']:
-            print(testUser.addAcctIds(i).modified_count," records modified for ",i)
-        print("[*Test Passed*]: standard_user_creation succeeded")
+            testUser.addAcctIds(i)
+        test(name="standard_user_creation",test=1,outcome=True)
     except:
-        print("[#Test Failed#]: standard_user_creation did not succeed")
+        test(name="standard_user_creation",test=1,outcome=False)
     #Testing User Creation For duplicate_user_creation
     
     duplicate_user_creation_userid=concat("testuser",test_run_id)
@@ -50,6 +52,6 @@ if __name__ == '__main__':
     duplicate_user_creation_last_name="Doe"
     duplicate_user_creation_password="##PASSWORDHASH##"
 
-    duplicate_user_creation = u.User.create(userid=duplicate_user_creation_userid,email=duplicate_user_creation_email,first_name=duplicate_user_creation_first_name,last_name=duplicate_user_creation_last_name,password=duplicate_user_creation_password)
+    duplicate_user_creation = u.User.create(userid=duplicate_user_creation_userid,email=duplicate_user_creation_email,first_name=duplicate_user_creation_first_name,last_name=duplicate_user_creation_last_name,password=duplicate_user_creation_password,timezone="US/Eastern")
     if duplicate_user_creation=="Error: UserID already in use":
-        print("[*Test Passed*]: duplicate_user_creation did not occur")
+        test(name="duplicate_user_creation",test=2,outcome=True)
