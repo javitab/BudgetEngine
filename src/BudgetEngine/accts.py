@@ -9,7 +9,7 @@ import datetime
 import BudgetEngine as be
 import BudgetEngine.data as data
 import BudgetEngine.users as u
-import BudgetEngine.tx as t
+from BudgetEngine.ptxLog import *
 from bson import ObjectId
 
 class Acct:
@@ -27,7 +27,7 @@ class Acct:
         self.tx_last_posted = self.data['tx_last_posted']
         self.rev_ids = self.getRevIds
         self.exp_ids = self.getExpIds
-        self.ptx_log_id = self.getPtxLogId
+        self.ptx_log_id = self.data['ptx_log_id']
     
     
     def reset(self):
@@ -86,15 +86,42 @@ class Acct:
                 "bank_routing_number": bank_routing_number,
                 "bank_account_number": bank_account_number,
                 "current_balance": current_balance,
-                "tx_last_posted": tx_last_posted
+                "tx_last_posted": tx_last_posted,
+                "ptx_log_id": None
+
                 }
             x = data.bedb['accounts'].insert_one(new_acct)
             if x.inserted_id == None: return "DB Error: Account not created"
             if x.inserted_id != None:
-                 
+                ptx_log_id=ptxLog.create(account=x.inserted_id)
+                new_acct=Acct(x.inserted_id)
                 be.u.User(ObjectId(owning_user)).addAcctIds(x.inserted_id)
+                new_acct.setPtxLogId(new_ptx_log_id=ptx_log_id,newacct=True)
                 return x.inserted_id
-
+    def setPtxLogId(self,new_ptx_log_id,newacct=False):
+        """
+        setPtxLogId on account. Check for existing ptx_log_id, if exists, take current, append to inactive_ptx_log_ids, write new to ptx_log_id.
+        """
+        if newacct == True:
+            acct_filter = {'_id': self.id}
+            new_ptx_log_id = {'$set':
+                {
+                    'ptx_log_id': new_ptx_log_id
+                }}
+            try:
+                data.bedb['accounts'].update_one(acct_filter,new_ptx_log_id)
+            except:
+                return "DB Error"
+        else:
+            inactive_ptx_log_ids={'$push':
+                {
+                    'inactive_ptx_log_ids': self.ptx_log_id
+                }}
+            try:
+                data.bedb['accounts'].update_one(acct_filter,inactive_ptx_log_ids)
+                data.bedb['accounts'].update_one(acct_filter,new_ptx_log_id)
+            except:
+                return "DB Error"    
     def addRevIds(self,rev_id):
         """This function will add to a list of revenues that are associated with an account by revenue _id
 
@@ -152,23 +179,6 @@ class Acct:
         for i in self.data['expIds']:
             expIds_array.append(i)
         return expIds_array
-    
-    def getPtxLogId(self):
-        """Checks if a ptxLog exists, if it does, it returns the ptxLogId
-            if a ptxLogId does not exist, will create one and return the _id
-        """
-        try:
-            return self.data['ptx_log_id']
-        except:
-            #If no ID exists, create new log
-            acct_filter = {"_id": self.id}
-            ptx_log_id={'$set':
-            {
-                'ptx_log_id': ObjectId("62c8f237ed0befd90364b6b6")
-            }}
-            x = data.bedb['accounts'].update_one(acct_filter,ptx_log_id)
-            self.reset()
-            return x
     def createExp(self, expense_display_name: str,start_date: datetime,end_date: datetime,frequency: int,amount=0.00):
         """calls to the Exp class to create a new expense
         """

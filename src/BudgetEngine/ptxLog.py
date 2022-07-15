@@ -65,11 +65,18 @@ class ptxLog:
         """
         self.__init__(self.id)
     
-    def create(self):
+    def create(account: ObjectId):
         """
-        Creates new ptxlog, updates acct
+        Creates new ptxlog, does not handle writing new id to acct
         """
-    
+        PostedTxs=[]
+        new_ptxlog = {
+            "account": account,
+            "last_seq": int(0),
+            "PostedTxs": PostedTxs
+        }
+        x = data.bedb['transactions'].insert_one(new_ptxlog)
+        return x.inserted_id
     def writePtx(ptx_log_id: ObjectId,memo: str,amount: float,date: datetime,tx_type: int,ad_hoc: False,balance: float,seq=None,categories=None):
         """
         Posts a transaction to the txLog
