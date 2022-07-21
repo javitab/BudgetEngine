@@ -117,8 +117,6 @@ class pTx:
         }
         ])
         sanitizedData=data.json.loads(dumps(self.rawdata))
-        normalizedData=data.pd.json_normalize(data=sanitizedData)
-        #self.data = normalizedData
         self.data = sanitizedData
         self.txID = self.data[0]['_id']
         self.date = self.data[0]['date']
