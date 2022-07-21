@@ -3,8 +3,6 @@ Initiating connection to database and pulling base dependencies
 """
 
 import array
-from ctypes import Array
-from tokenize import Double
 import pymongo
 import datetime as dt
 import calendar as cal
@@ -62,7 +60,7 @@ def dtfunc(period,component,fmt='dt'):
                     ['last_day_month'],
                     ['last_date_month'],
                     ['first_day_month']
-        output(float): Options:
+        fmt(str): Options:
             ['dt'],
             ['str']
     """

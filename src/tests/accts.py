@@ -7,8 +7,9 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 import random
 from operator import concat
 from bson import ObjectId
+from pprint import pprint
 
-from BudgetEngine import accts,data
+from BudgetEngine import accts,data,ptxLog
 from testfx import *
 
 
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     ### and creating test user to make owner for accounts
     ###
 
-    test_run_id = concat(d.dtfunc('today','fulldate','str'),concat('-',str(random.randrange(111,999))))
+    test_run_id = concat(data.dtfunc('today','fulldate','str'),concat('-',str(random.randrange(111,999))))
     test_bank_name = concat('TestBank-',test_run_id)
 
     try:
@@ -145,7 +146,6 @@ if __name__ == '__main__':
 
     for i in ['62c8f237ed0befd90364b6b6','62c8f26271eeb79862d9f479','62a2c4875d353495c3c3ecee','62c8f237ed0befd90364b6b5']:
         testAcctExpIds.addExpIds(i)
-
     exp_ids_total=0
     for i in testAcctExpIds.exp_ids():
         exp_ids_total = exp_ids_total + 1
@@ -153,4 +153,26 @@ if __name__ == '__main__':
         test(name="push_expIds_array",test=1,outcome=True)
     else:
         test(name="push_expIds_array",test=1,outcome=False)
-        
+
+    #Create Account with write_posted_transactions
+    
+    write_posted_transactions_bank_routing_number = random.randrange(1000000,9999999)
+    write_posted_transactions_bank_account_number = random.randrange(1000000,9999999)
+    write_posted_transactions_account_display_name = ('TestAccount-write_posted_transactions-%s' % test_run_id)
+
+    write_posted_transactions_account_creation = accts.Acct.create(bank_name=test_bank_name,account_display_name=write_posted_transactions_account_display_name, owning_user=standard_user_creation, low_balance_alert=100.00, bank_routing_number=write_posted_transactions_bank_routing_number, bank_account_number=write_posted_transactions_bank_account_number, current_balance=0, tx_last_posted=None)
+    testAcctPostedTx = accts.Acct(write_posted_transactions_account_creation)
+
+    ptx_counter=0
+    while ptx_counter < 5:
+        try:
+            testAcctPostedTx.writePtx(memo=f"Test Transaction {ptx_counter}",amount=420.69,date=data.dtfunc(period='today',component='fulldate',fmt='dt'),tx_type=1,ad_hoc=True,balance=5023.23)
+            ptx_counter = ptx_counter+1
+            test(name="write_posted_tx",test=1,outcome=True)
+        except:
+            test(name="write_posted_tx",test=1,outcome=False)
+    
+    testAcctPostedTxLog=ptxLog.ptxLog(testAcctPostedTx.ptx_log_id)
+    for i in testAcctPostedTxLog.transactions:
+        pTx = ptxLog.pTx(ptx_log_oid=testAcctPostedTxLog.currAcct.ptx_log_id,tx_oid=i['_id'])
+        print(pTx.memo)

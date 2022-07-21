@@ -47,7 +47,7 @@ class Acct:
                         'current_balance': new_balance
                     }}
                 )
-        self.reset(self)
+        self.reset()
 
     def setTxLastPosted(self, tx_last_posted: datetime):
         """Sets the accounts current balance without transactions
@@ -61,7 +61,7 @@ class Acct:
                         'tx_last_posted': tx_last_posted
                     }}
                 )
-        self.reset(self)
+        self.reset()
 
     def create(bank_name: str, account_display_name: str, owning_user: str, low_balance_alert=100.00, bank_routing_number=None, bank_account_number=None, current_balance=0, tx_last_posted=None):
         """Create a new account after confirming no conflicts
@@ -196,3 +196,10 @@ class Acct:
             return x
         except:
             return "Unable to create revenue from Acct class"
+
+    def writePtx(self,memo: str,amount: float,date: datetime,tx_type: int,ad_hoc: False,balance: float,seq=None,categories=None):
+        """
+        Posts a transaction to the txLog
+        """
+        AcctPtxLog=ptxLog(self.ptx_log_id)
+        AcctPtxLog.writePtx(memo=memo,amount=amount,date=date,tx_type=tx_type,ad_hoc=ad_hoc,balance=balance,seq=seq,categories=categories)
