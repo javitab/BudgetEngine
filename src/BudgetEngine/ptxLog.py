@@ -35,6 +35,14 @@ class ptxLog:
             }
         ])
         self.currAcct = be.a.Acct(self.data['account'])
+    def iter_ptx(self):
+        """
+        Iterates through transactions to find the total count
+        """
+        tcount = 0
+        for t in self.transactions:
+            tcount = tcount+1
+        return tcount
     def reset(self):
         """Reinitializes the current instance of the class. This should be done every time a new value is written to the DB.
         """

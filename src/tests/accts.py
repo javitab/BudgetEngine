@@ -40,7 +40,7 @@ if __name__ == '__main__':
         standard_user_creation = u.User.create(userid=standard_user_creation_userid,email=standard_user_creation_email,first_name=standard_user_creation_first_name,last_name=standard_user_creation_last_name,password=standard_user_creation_password,timezone=standard_user_creation_timezone)
         testUser = u.User(standard_user_creation)
         print("Current UserID: ",testUser.userid)
-        print("Current _id: ",testUser.id)
+        print("Current User _id: ",testUser.id)
         test(name="standard_user_creation",test=1,outcome=True)
     except:
         test(name="standard_user_creation",test=1,outcome=False)
@@ -168,11 +168,13 @@ if __name__ == '__main__':
         try:
             testAcctPostedTx.writePtx(memo=f"Test Transaction {ptx_counter}",amount=420.69,date=data.dtfunc(period='today',component='fulldate',fmt='dt'),tx_type=1,ad_hoc=True,balance=5023.23)
             ptx_counter = ptx_counter+1
-            test(name="write_posted_tx",test=1,outcome=True)
         except:
             test(name="write_posted_tx",test=1,outcome=False)
     
     testAcctPostedTxLog=ptxLog.ptxLog(testAcctPostedTx.ptx_log_id)
-    for i in testAcctPostedTxLog.transactions:
-        pTx = ptxLog.pTx(ptx_log_oid=testAcctPostedTxLog.currAcct.ptx_log_id,tx_oid=i['_id'])
-        print(pTx.memo)
+    transactions = testAcctPostedTxLog.transactions
+    if testAcctPostedTxLog.iter_ptx()==5:
+        test("write_posted_txs",test=1,outcome=True)
+    else:
+        test("write_posted_txs",test=1,outcome=False)
+        
