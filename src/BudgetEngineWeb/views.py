@@ -8,13 +8,14 @@ import json
 from bson import ObjectId, json_util
 import BudgetEngine as be
 import pprint
+
+from BudgetEngine.users import User
 views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    accts = be.listCollection("accounts")
-    accts = be.convDf(accts)
-    accts = list(accts.itertuples(index=True, name=None))
+    user=be.u.User(oid='62d8c317897a268ac09d2953')
+    accts = user.acctIds
     return render_template("home.html", accts=accts)
 
 @views.route('/accts', methods=['GET','POST'])

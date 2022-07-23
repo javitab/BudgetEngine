@@ -34,7 +34,6 @@ if __name__ == '__main__':
         
 
         standard_user_creation = u.User.create(userid=standard_user_creation_userid,email=standard_user_creation_email,first_name=standard_user_creation_first_name,last_name=standard_user_creation_last_name,password=standard_user_creation_password,timezone="US/Eastern")
-        print(standard_user_creation)
         testUser = u.User(standard_user_creation)
         print("Current UserID: ",testUser.userid)
         print("Current _id: ",testUser.id)
