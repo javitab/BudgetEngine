@@ -6,38 +6,24 @@ from bson.json_util import dumps
 import pandas as pd
 import json
 from bson import ObjectId, json_util
-import BudgetEngine as be
+from BudgetEngine import *
 import pprint
+from BudgetEngine.accts import Acct
 
 from BudgetEngine.users import User
 views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    user=be.u.User(oid='62d8c317897a268ac09d2953')
-    accts = user.acctIds
-    return render_template("home.html", accts=accts)
+    return render_template("home.html")
 
 @views.route('/accts', methods=['GET','POST'])
 def accts():
     account = request.args.get('acct')
     if account != None:
-        acct=be.acct(account).name
+        acct=Acct(acct)
     else:
         acct=account
-    if request.method == 'POST':
-        NewTxMemo=request.form.get('NewTxMemo')
-        NewTxAmount=float(request.form.get('NewTxAmount'))
-        NewTxDate=request.form.get('NewTxDate')
-        NewTxType=request.form.get('NewTxType')
-        NewTxAdhoc=request.form.get('NewTxAdhoc')
-        if NewTxType == 'credit':
-            NewTxBalance=round(acct.CurrBalance+NewTxAmount,2)
-        if NewTxType == 'debit':
-            NewTxBalance=round(acct.CurrBalance-NewTxAmount,2)
-        print(NewTxMemo,NewTxAmount,NewTxDate,NewTxType,NewTxAdhoc)
-        NewTxAdhoc=bool(NewTxAdhoc=='True')
-        be.writeTx(acct.name,NewTxType,NewTxDate,NewTxAmount,NewTxMemo,NewTxAdhoc,NewTxBalance)
     accts = be.listCollection("accounts")
     accts = be.convDf(accts)
     accts = list(accts.itertuples(index=True, name=None))
