@@ -12,6 +12,7 @@ import bson
 import json
 import BudgetEngine.config as config
 import pandas as pd
+from mongoengine import *
 
 #getting environment variables
 evars = config.Vars()
@@ -25,21 +26,24 @@ def verbose(object):
     elif verboseON == 0:
         pass
 
-#connecting to db
-dbclient = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
-bedbcurs = dbclient[evars.DBName]
+#Connect to database
+connect(host=("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
 
-#defining collection cursors
+# #connecting to db
+# dbclient = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
+# bedbcurs = dbclient[evars.DBName]
 
-collections=['accounts','expenses','revenue','projections','transactions','users']
-bedb={}
-for i in collections:
-    bedb[i] = bedbcurs[i]
-    if bedb[i].count_documents({},limit=1) < 1:
-        bedb[i].insert_one({
-            'init_record': True,
-            'init_time': dt.datetime.utcnow()
-        })
+# #defining collection cursors
+
+# collections=['accounts','expenses','revenue','projections','transactions','users']
+# bedb={}
+# for i in collections:
+#     bedb[i] = bedbcurs[i]
+#     if bedb[i].count_documents({},limit=1) < 1:
+#         bedb[i].insert_one({
+#             'init_record': True,
+#             'init_time': dt.datetime.utcnow()
+#         })
 
 
 
