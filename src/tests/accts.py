@@ -12,7 +12,6 @@ from pprint import pprint
 from BudgetEngine import accts,data,ptxLog
 from testfx import *
 
-
 if __name__ == '__main__':
     if __package__ is None:
         import sys
