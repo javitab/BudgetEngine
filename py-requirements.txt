@@ -6,3 +6,4 @@ flask
 flask-login
 termcolor
 mongoengine
+faker
