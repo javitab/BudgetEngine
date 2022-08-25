@@ -1,8 +1,8 @@
-
-import BudgetEngine.accts as a
-import BudgetEngine.config as c
+from BudgetEngine.config import *
 from BudgetEngine.data import *
-import BudgetEngine.users as u
-import BudgetEngine.ptxLog as ptx
-import BudgetEngine.expenses as e
-import BudgetEngine.revenue as r
+from BudgetEngine.users import *
+from BudgetEngine.accts import *
+from BudgetEngine.ptxLog import *
+from BudgetEngine.tx import *
+from BudgetEngine.revenue import *
+from BudgetEngine.expenses import *
