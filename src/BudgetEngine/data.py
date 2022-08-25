@@ -2,16 +2,12 @@
 Initiating connection to database and pulling base dependencies
 """
 
-import array
-import pymongo
+
 import datetime as dt
 import calendar as cal
 from dateutil.relativedelta import relativedelta
 import os
-import bson
-import json
 import BudgetEngine.config as config
-import pandas as pd
 from mongoengine import *
 
 #getting environment variables

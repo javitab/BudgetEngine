@@ -3,6 +3,8 @@ Module for users data model
 """
 
 from BudgetEngine.data import *
+from BudgetEngine.accts import *
+from BudgetEngine.ptxLog import *
 
 class User(Document):
     userid = StringField(max_length=30, required=True, unique=True)
@@ -14,31 +16,35 @@ class User(Document):
     timezone = StringField(max_length=50, required=True)
     acctIds = ListField((ReferenceField("acct")))
 
-    def create(userid: str, email: str, first_name: str, last_name: str, password: str, timezone: str):
-        """Create new user account after confirming no conflicts
-        Args:
-            userid (str): userid for login
-            email (str): user's email address
-            first_name (str): users's First Name
-            last_name (str): user's Last Name
-            password (str): users' hashed password
-            timezone (str): user's timezone
+    meta = {
+        'indexes': ['userid', 'email']
+    }
+
+    def createUser(self, userid, email, first_name, last_name, password, timezone):
         """
-        if data.bedb['users'].count_documents({"userid":userid}, limit=1) > 0:
-            return "Error: UserID already in use"
-        elif data.bedb['users'].count_documents({"email":email}, limit=1) > 0:
-            return "Error: Email already in use"
-        else:
-            new_user={
-                "userid": userid,
-                "email": email,
-                "first_name": first_name,
-                "last_name": last_name,
-                "password": password,
-                "timezone": timezone
-            }
-            x = data.bedb['users'].insert_one(new_user)
-            if x.inserted_id == None:
-                return "DB Error: Account not created"
-            if x.inserted_id != None:
-                return x.inserted_id
+        Create a new user
+        """
+        user = User(userid=userid, email=email, first_name=first_name, last_name=last_name, password=password, timezone=timezone)
+        user.save()
+        return user
+    def addAcctId(self, acctId):
+        """
+        Add an account id to the user
+        """
+        self.acctIds.append(acctId)
+        self.save()
+        return self
+    def getAcctIds(self):
+        """
+        Get the account ids for the user
+        """
+        return self.acctIds
+    def createAcct(self, bank_name, bank_routing_number, bank_account_number, account_display_name, current_balance, low_balance_alert, tx_last_posted):
+        """
+        Create a new account
+        """
+        acct = Acct(bank_name=bank_name, bank_routing_number=bank_routing_number, bank_account_number=bank_account_number, account_display_name=account_display_name, current_balance=current_balance, low_balance_alert=low_balance_alert, tx_last_posted=tx_last_posted)
+        acct.save()
+        PtxLog.createPtxLog(acct)
+        self.addAcctId(acct.id)
+        return acct
