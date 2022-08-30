@@ -3,12 +3,16 @@ Initiating connection to database and pulling base dependencies
 """
 
 
-import datetime as dt
+from datetime import datetime as dt
+from datetime import timedelta
 import calendar as cal
-from dateutil.relativedelta import relativedelta
 import os
-import BudgetEngine.config as config
 from mongoengine import *
+from bson import ObjectId
+
+#Importing Configuration File
+import BudgetEngine.config as config
+
 
 #getting environment variables
 evars = config.Vars()
@@ -23,25 +27,7 @@ def verbose(object):
         pass
 
 #Connect to database
-connect(host=("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
-
-# #connecting to db
-# dbclient = pymongo.MongoClient(("mongodb://%s:%s/" % (evars.MongoDBIP, evars.MongoDBPort)))
-# bedbcurs = dbclient[evars.DBName]
-
-# #defining collection cursors
-
-# collections=['accounts','expenses','revenue','projections','transactions','users']
-# bedb={}
-# for i in collections:
-#     bedb[i] = bedbcurs[i]
-#     if bedb[i].count_documents({},limit=1) < 1:
-#         bedb[i].insert_one({
-#             'init_record': True,
-#             'init_time': dt.datetime.utcnow()
-#         })
-
-
+register_connection(alias='default',name=evars.DBName, host=evars.MongoDBIP, port=evars.MongoDBPort)
 
 #defining dates
 def dtfunc(period,component,fmt='dt'):
@@ -98,28 +84,34 @@ def convDate(inputdate: str):
     Returns:
         _type_: date as datetime object
     """
-    x = dt.datetime.strptime(inputdate,"%Y-%m-%d")
+    x = dt.strptime(inputdate,"%Y-%m-%d")
     return x
 
-def txIterate(frequency: int, inputdate: dt.date):
+def txIterate(frequency: str, inputdate: dt):
     """Given a frequency and input date, this function will calculate the next date based on the frequency
 
     Args:
-        frequency (int): 
-            [1: biweekly],
-            [2: weekly],
-            [3: monthly],
-            [4: daily]
+        frequency (str): 
+            "daily",
+            "weekly",
+            "biweekly",
+            "monthly",
+            "quarterly",
+            "yearly"
         inputdate (dt.date): input date as datetime object
 
     Returns:
         dt.date: new date as datetime object
     """
     startdate = inputdate
-    if frequency == 1: delta = dt.timedelta(weeks=2)
-    if frequency == 2: delta = dt.timedelta(weeks=1)
-    if frequency == 3: delta = dt.timedelta(months=1)
-    if frequency == 4: delta = dt.timedelta(days=1)
+    if frequency == "daily": delta = timedelta(days=1)
+    if frequency == 'weekly': delta = timedelta(weeks=1)
+    if frequency == 'biweekly': delta = timedelta(weeks=2)
+    if frequency == 'monthly': delta = timedelta(weeks=4)
+    if frequency == 'quarterly': delta = timedelta(weeks=12)
+    if frequency == 'yearly': delta = timedelta(years=1)
+    if isinstance(startdate,str):
+        startdate=convDate(startdate)
     x = startdate + delta
     return x
 
@@ -160,3 +152,91 @@ def menuGen(actions: list,mnuName: str,clear=1):
     if action == "Q" or action == 'q': action = 'Q'
     if clear == 1: cls()
     return action
+
+###                      ###
+### Defining data models ###
+###                      ###
+
+class Exp(Document):
+    """exp class for creating new and updating existing accounts
+    """
+    display_name=StringField(max_length=50, required=True)
+    amount=DecimalField(required=True)
+    frequency=StringField(max_length=10, required=True, choices=["weekly","biweekly","monthly","quarterly","yearly"])
+    start_date=DateTimeField(required=True)
+    end_date=DateTimeField()
+    last_posted_date=DateTimeField()
+    time_created=DateTimeField(required=True,default=dt.utcnow())
+
+    def next_date(self):
+        """This function calculates the next date for the expense and returns it as a datetime object
+        """
+        if self.last_posted_date == None:
+            return txIterate(self.frequency,self.start_date).strftime('%Y-%m-%d')
+        else:
+            return txIterate(self.frequency,self.last_posted_date).strftime('%Y-%m-%d')
+
+    
+class Rev(Document):
+    display_name=StringField(max_length=50, required=True)
+    amount=DecimalField(required=True)
+    frequency=StringField(max_length=10, required=True, choices=["weekly","biweekly","monthly","quarterly","yearly"])
+    start_date=DateTimeField(required=True)
+    end_date=DateTimeField()
+    last_posted_date=DateTimeField()
+    time_created=DateTimeField(required=True,default=dt.utcnow())
+
+    def  next_date(self):
+        """This function calculates the next date for the revenue and returns it as a datetime object
+        """
+        if self.last_posted_date == None:
+            return txIterate(self.frequency,self.start_date).strftime('%Y-%m-%d')
+        else:
+            return txIterate(self.frequency,self.last_posted_date).strftime('%Y-%m-%d')
+
+class Tx(EmbeddedDocument):
+    txID=ObjectIdField(required=True)
+    date=DateTimeField(required=True)
+    memo=StringField(max_length=100, required=True)
+    amount=DecimalField(required=True)
+    tx_type=StringField(max_length=10, required=True,choices=["debit","credit"])
+    ad_hoc=BooleanField(required=True)
+    balance=DecimalField(required=True)
+    categories=ListField((StringField(max_length=50)))
+
+class PtxLog(Document):
+    date_created=DateTimeField(required=True,default=dt.utcnow())
+    posted_txs=EmbeddedDocumentListField(Tx)
+
+class Acct(Document):
+    """
+    acct class for creating new and updating existing accounts
+    """
+    bank_name=StringField(max_length=50, required=True)
+    bank_routing_number=StringField(max_length=50, required=True)
+    bank_account_number=StringField(max_length=50, required=True)
+    account_display_name=StringField(max_length=50, required=True)
+    current_balance=DecimalField(required=True)
+    low_balance_alert=DecimalField(required=True)
+    tx_last_posted=DateTimeField(required=True)
+    rev_ids=ListField((ReferenceField(Rev)))
+    exp_ids=ListField((ReferenceField(Exp)))
+    active_ptx_log_id=ReferenceField(PtxLog)
+    history_ptx_log_ids=ListField((ReferenceField(PtxLog)))
+
+    meta = {
+        'indexes': ['rev_ids','exp_ids','active_ptx_log_id','history_ptx_log_ids']
+    }
+
+class User(Document):
+    userid = StringField(max_length=30, required=True, unique=True)
+    email = EmailField(unique=True, required=True)
+    first_name = StringField(max_length=50, required=True)
+    last_name = StringField(max_length=50, required=True)
+    password = StringField(max_length=50, required=True)
+    timezone = StringField(max_length=50, required=True)
+    acctIds = ListField((ReferenceField(Acct)))
+
+    meta = {
+        'indexes': ['userid', 'email']
+    }

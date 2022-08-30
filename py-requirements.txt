@@ -7,3 +7,4 @@ flask-login
 termcolor
 mongoengine
 faker
+prettytable
