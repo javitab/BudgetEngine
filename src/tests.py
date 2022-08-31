@@ -6,6 +6,7 @@ import random
 
 from BudgetEngine.data import *
 from prettytable import PrettyTable
+from bson.objectid import ObjectId
 
 
 
@@ -31,12 +32,12 @@ if __name__=='__main__':
         """
         Create test accounts for newUser
         """
-        for _ in range(5):
+        for _ in range(1):
             newAcct = Acct(
                 bank_name=fake.random_element(elements=['Chase','Wells Fargo','Citi','Bank of America','PNC','US Bank','USAA','Capital One','Connex Credit Union']),
                 bank_routing_number=fake.aba(), 
                 bank_account_number=fake.bban(), 
-                account_display_name=fake.random_element(elements=['Checking','Savings','Joint','Expenses']),
+                account_display_name=fake.random_element(elements=['Checking','Savings','Joint','Expense']),
                 current_balance=fake.pydecimal(positive=True, min_value=1, max_value=100000, left_digits=6, right_digits=2),
                 low_balance_alert=fake.pydecimal(positive=True, min_value=1, max_value=1000, left_digits=4, right_digits=2), 
                 tx_last_posted=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None))
@@ -58,19 +59,6 @@ if __name__=='__main__':
             newRev.save()
             newAcct.rev_ids.append(newRev.id)
             newAcct.save()
-            # for _ in range(5):
-            #     newPtxLog.posted_txs.create(
-            #         date=txIterate(frequency=newRev.frequency, inputdate=newRev.start_date),
-            #         memo=newRev.display_name,
-            #         amount=newRev.amount,
-            #         tx_type="credit",
-            #         ad_hoc=False,
-            #         balance=newAcct.current_balance+newRev.amount)
-            #     newPtxLog.save()
-            #     newAcct.current_balance += newRev.amount
-            #     newAcct.save()
-            # for i in newPtxLog.posted_txs:
-            #     print(i.date, i.memo, i.amount, i.tx_type, i.balance)
             
             for _ in range(5):
                 newExp = Exp(
@@ -109,6 +97,8 @@ if __name__=='__main__':
                         newPtxLog.save()
                         newAcct.current_balance += rev.amount
                         newAcct.save()
+                        rev.last_posted_date=_date
+                        rev.save()
                 for exp in newAcct.exp_ids:
                     exp=Exp.objects.get(id=exp)
                     if exp.next_date()==_date:
@@ -123,6 +113,8 @@ if __name__=='__main__':
                         newPtxLog.save()
                         newAcct.current_balance -= exp.amount
                         newAcct.save()
+                        exp.last_posted_date=_date
+                        exp.save()
 
             #Output data written to PtxLog
             print("\n### Printing Transactions for Acct: ",newAcct.account_display_name)
@@ -139,3 +131,8 @@ if __name__=='__main__':
             print("\n\n### Account Revenues ###")
             for revid in acct.rev_ids:
                 print(revid.display_name, " ", revid.amount, " ", revid.frequency, " ", revid.next_date())
+            print("\n\n### Account Transactions ###")
+            ptxLog=acct.active_ptx_log_id
+            print("### Current active_ptx_log_id: ",ptxLog.id)
+            for tx in ptxLog.posted_txs:
+                print(tx.date, tx.memo, tx.amount, tx.tx_type, tx.balance)

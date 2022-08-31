@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Accts{% endblock %}
+
+
+{% block content %}
+<br>
+<h3>Viewing transactions in {{acct.account_display_name}}</h3>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/accts?acct={{acct.id}}&user={{user.id}}">{{acct.account_display_name}}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=adhoc" role="button">New Tx</a>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Accounts</a>
+    <ul class="dropdown-menu">
+      {% for i in user.acctIds %}
+      <li><a class="dropdown-item" href="/accts?acct={{i.id}}&user={{user.id}}">{{i.account_display_name}}</a></li>
+      {%endfor%}
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">Create New Account</a></li>
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Revenue</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.rev_ids %}
+        <li><a class="dropdown-item" href="#">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Create New Revenue</a></li>
+      </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Expenses</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.exp_ids %}
+        <li><a class="dropdown-item" href="/expense?acct={{acct.id}}&user={{user.id}}&expid_arg={{i.id}}">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/expense?acct={{acct.id}}&user={{user.id}}">Create New Expense</a></li>
+      </ul>
+  </li>
+  </li><li class="nav-item">
+    <a class="nav-link dropdown-toggle disabled" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Projections</a>
+    <ul class="dropdown-menu">
+        {% for i in projs %}
+        <li><a class="dropdown-item" href="#"></a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Create New Projection</a></li>
+      </ul>
+  </li> </li>
+
+  {% block pretable %}
+  {% endblock %}
+
+</ul>
+<table class="table table-success table-striped-columns table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">_id</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">TxType</th>
+            <th scope="col">AdHoc</th>
+            <th scope="col">Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for i in ptx %}
+            <tr>
+                <td>{{"#"}}</td>
+                <td>{{i.txID}}</td>
+                <td>{{i.memo}}</td>
+                {%if i.tx_type=="debit"%}
+                <td>{{"-$%.2f"|format(i.amount)}}</td>
+                {%else%}
+                <td>{{"$%.2f"|format(i.amount)}}</td>
+                {%endif%}
+                <td>{{i.date}}</td>
+                <td>{{i.tx_type}}</td>
+                <td>{{i.ad_hoc}}</td>
+                <td>{{i.balance}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+{% endblock %}

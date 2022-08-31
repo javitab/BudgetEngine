@@ -1,0 +1,27 @@
+{% extends "accts.html" %}
+{% block title %}Accts{% endblock %}
+
+
+{% block pretable %}
+
+<div class="container">
+        {% if expid != None %}
+        <h4>Expense - {{exp.display_name}}</h4>
+        {% else %}
+        <h4>Expense - *New*</h4>
+        {% endif %}
+    <form method="POST" id="expForm">
+    <label for="expForm" class="form-label">Modify Expense record</label>
+    <div class="input-group mb-3">
+        <span class="input-group-text">_id</span>
+        <input type="text" class="form-control" id="dispname_post" name="dispname_post" placeholder="Expense Name" value="{{exp.id}}" disabled>
+        <input type="text" class="form-control" id="dispname_post" name="dispname_post" placeholder="Expense Name" value="{{exp.display_name}}">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="amount_post" name="amount_post" placeholder="amount" value="{{exp.amount}}">
+        <span class="input-group-text">↻</span>
+        <input type="text" class="form-control" id="frequency_post" name="frequency_post" placeholder="frequency" value="{{exp.frequency}}">
+    </form>
+</div>
+{% endblock %}

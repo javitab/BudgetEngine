@@ -1,0 +1,93 @@
+{% extends "accts.html" %}
+{% block title %}Accts{% endblock %}
+
+
+{% block pretable %}
+
+<div class="container">
+    <h4>Post New Transaction</h4>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">{{acct.account_display_name}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=adhoc">New AdHoc Tx</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Rev Tx</a>
+            <ul class="dropdown-menu">
+                {% for i in acct.rev_ids %}
+                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=rev&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
+                {%endfor%}
+              </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Exp Tx</a>
+            <ul class="dropdown-menu">
+                {% for i in acct.exp_ids %}
+                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=exp&typeid_arg={{i.id}}">New {{i.display_name}}</a></li>
+                {%endfor%}
+              </ul>
+          </li>
+      </ul>
+</div>
+
+<table class="table table-success table-striped-columns">
+    <thead>
+        <tr>
+            <th scope="col">Transaction Type</th>
+            <th scope="col">Date</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            {% if txtype == 'AdHoc' %}
+            <th scope="col">debit?</th> 
+            {% endif %}
+            <th scope="col">Submit</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <form method="POST" id="newTxForm">
+                <td>
+                    <input type="text" id="txtype_post" name="txtype_post" value="{{txtype}}" readonly>
+                </td>
+                <td>
+                    {% if txTypeData != None %}
+                    <input type="text" id="txdate_post" name="txdate_post" value="{{txTypeData.next_date()}}">
+                    {% else %}
+                    <input type="text" id="txdate_post" name="txdate_post" placeholder="YYYY-MM-DD">
+                    {% endif %}
+                </td>
+                <td>
+                    {% if txTypeData != None %}
+                    <input type="text" id="#" name="#" value="{{txTypeData.display_name}}" placeholder="{{txTypeData.display_name}}" readonly>
+                    <input type="text" id="typeid_post" name="typeid_post" value="{{txTypeData.id}}" placeholder="{{txTypeData.display_name}}" readonly hidden>
+                    {% else %}
+                    <input type="text" id="txmemo_post" name="txmemo_post" placeholder="Memo line here">
+                    {% endif %}
+                <td>
+                    {% if txTypeData != None %}
+                    <input type="text" id="txamount_post" name="txamount_post" value="{{txTypeData.amount}}">
+                    {% else %}
+                    <input type="text" id="txamount_post" name="txamount_post" placeholder="$####.00">
+                    {% endif %}
+                </td>
+                    {% if txtype == 'AdHoc' %}
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="txdebit_post" id="txdebit_post1">
+                            <label class="form-check-label" for="txdebit_post">
+                              Debit
+                            </label>
+                          </div>
+                    </td>
+                    {% endif %}
+                </td>
+                <td>
+                    <button type="submit" onclick="myFunction()" class="btn btn-primary">Submit</button>
+                </td>
+            </form>
+            </tr>
+        </tbody>
+</table>
+{% endblock %}
