@@ -53,7 +53,7 @@ if __name__=='__main__':
                 display_name=fake.random_element(elements=['Day Job','Uber','Lyft','Instacart']),
                 amount=fake.pydecimal(positive=True, min_value=1, max_value=100000, left_digits=6, right_digits=2),
                 frequency="weekly",
-                start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None),
+                start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None)
 
             )
             newRev.save()

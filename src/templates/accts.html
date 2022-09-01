@@ -23,13 +23,13 @@
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Revenue</a>
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-revanded="false">Revenues</a>
     <ul class="dropdown-menu">
         {% for i in acct.rev_ids %}
-        <li><a class="dropdown-item" href="#">{{i.display_name}}</a></li>
+        <li><a class="dropdown-item" href="/revenue?acct={{acct.id}}&user={{user.id}}&revid_arg={{i.id}}">{{i.display_name}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Create New Revenue</a></li>
+        <li><a class="dropdown-item" href="/revenue?acct={{acct.id}}&user={{user.id}}">Create New Revenue</a></li>
       </ul>
   </li>
   <li class="nav-item">

@@ -214,8 +214,6 @@ def expense():
     start_date_post = request.form.get('start_date_post')
     end_date_arg = request.args.get('end_date_arg')
     end_date_post = request.form.get('end_date_post')
-    last_posted_date_arg = request.args.get('last_posted_date_arg')
-    last_posted_date_post = request.form.get('last_posted_date_post')
 
     ###
     ### Evaluating arguments received
@@ -235,43 +233,187 @@ def expense():
         expid=None
     
 
-    if expid==None:
+    if dispname_post!=None:
+        dispname_arg=None
+        dispname=dispname_post
+    elif dispname_arg!=None:
+        dispname=dispname_post
+    
+    if amount_post!=None:
+        amount_arg=None
+        amount=amount_post
+    elif amount_arg!=None:
+        amount=amount_post
+
+    if frequency_post!=None:
+        frequency_arg=None
+        frequency=frequency_post
+    elif frequency_arg!=None:
+        frequency=frequency_post
+    
+    if start_date_post!=None:
+        start_date_arg=None
+        start_date=start_date_post
+    elif start_date_arg!=None:
+        start_date=start_date_post
+    
+    if end_date_post!=None:
+        end_date_arg=None
+        end_date=end_date_post
+    elif end_date_arg!=None:
+        end_date=end_date_post
+    try:
+        if end_date=="": end_date=None
+    except:
+        end_date=None
+
+    if expid=="":
         exp=None
-        if dispname_post!=None:
-            dispname_arg=None
-        elif dispname_arg!=None:
-            dispname=dispname_post
-        
-        if amount_post!=None:
-            amount_arg=None
-        elif amount_arg!=None:
-            amount=amount_post
+    elif expid!=None:
+        try:
+            exp=Exp.objects.get(id=expid)
+        except:
+            exp=None
+            flash("Unable to create object.", category="warning")
 
-        if frequency_post!=None:
-            frequency_arg=None
-        elif frequency_arg!=None:
-            frequency=frequency_post
-        
-        if start_date_post!=None:
-            start_date_arg=None
-        elif start_date_arg!=None:
-            start_date=start_date_post
-        
-        if end_date_post!=None:
-            end_date_arg=None
-        elif end_date_arg!=None:
-            end_date=end_date_post
-        
-        if last_posted_date_post!=None:
-            last_posted_date_arg=None
-        elif last_posted_date_arg!=None:
-            last_posted_date=last_posted_date_post
-    else:
-        exp=Exp.objects.get(id=expid)
+    try:
+        if (dispname!=None and amount!=None and frequency!=None and start_date!=None):
+            if (expid!=None):
+                print("expid: ",type(expid),"dispname: ",dispname,"amount: ",amount,"frequency: ",frequency,"start_date: ",start_date,"end_date: ",end_date)
+                try:
+                    exp=Exp.objects.get(id=expid)
+                    exp.display_name=dispname
+                    exp.amount=amount
+                    exp.frequency=frequency
+                    exp.start_date=start_date
+                    if end_date!=None: exp.end_date=end_date
+                    exp.save()
+                except:
+                    flash("Unable to update existing exp object.", category="error")
+            if (expid==""):
+                exp=Exp(display_name=dispname, amount=amount, frequency=frequency, start_date=start_date)
+                exp.save()
+                acct.exp_ids.append(exp.id)
+                acct.save()
+                print("exp.id: ",exp.id,"exp.display_name: ",exp.display_name,"exp.amount: ",exp.amount,"exp.frequency: ",exp.frequency,"exp.start_date: ",exp.start_date,"exp.end_date: ",exp.end_date)
+    except:
+        flash("Ensure all fields are filled in before submitting.", category="warning")
 
-
+    try:
+        exp
+    except NameError: exp=None
 
     return render_template("expense.html", exp=exp, acct=acct, user=user, ptx=ptx, expid=expid)
 
     
+@views.route('/revenue', methods=['GET','POST'])
+def revenue():
+    accountid = request.args.get('acct')
+    userid = request.args.get('user')
+    revid_arg = request.args.get('revid_arg')
+    revid_post = request.form.get('revid_post')
+    dispname_arg = request.args.get('dispname_arg')
+    dispname_post = request.form.get('dispname_post')
+    amount_arg = request.args.get('amount_arg')
+    amount_post = request.form.get('amount_post')
+    frequency_arg = request.args.get('frequency_arg')
+    frequency_post = request.form.get('frequency_post')
+    start_date_arg = request.args.get('start_date_arg')
+    start_date_post = request.form.get('start_date_post')
+    end_date_arg = request.args.get('end_date_arg')
+    end_date_post = request.form.get('end_date_post')
+
+    ###
+    ### Evaluating arguments received
+    ###
+
+    if accountid!=None:
+        acct=Acct.objects.get(id=accountid)
+        ptx=acct.active_ptx_log_id.posted_txs
+    if userid!=None:
+        user=User.objects.get(id=userid)
+    if revid_post!=None:
+        revid=revid_post
+        revid_arg=None
+    if revid_arg!=None:
+        revid=revid_arg
+    if revid_arg==None and revid_post==None:
+        revid=None
     
+
+    if dispname_post!=None:
+        dispname_arg=None
+        dispname=dispname_post
+    elif dispname_arg!=None:
+        dispname=dispname_post
+    
+    if amount_post!=None:
+        amount_arg=None
+        amount=amount_post
+    elif amount_arg!=None:
+        amount=amount_post
+
+    if frequency_post!=None:
+        frequency_arg=None
+        frequency=frequency_post
+    elif frequency_arg!=None:
+        frequency=frequency_post
+    
+    if start_date_post!=None:
+        start_date_arg=None
+        start_date=start_date_post
+    elif start_date_arg!=None:
+        start_date=start_date_post
+    
+    if end_date_post!=None:
+        end_date_arg=None
+        end_date=end_date_post
+    elif end_date_arg!=None:
+        end_date=end_date_post
+    try:
+        if end_date=="": end_date=None
+    except:
+        end_date=None
+
+    if revid=="":
+        rev=None
+    elif revid!=None:
+        try:
+            rev=Rev.objects.get(id=revid)
+        except:
+            rev=None
+            flash("Unable to create object.", category="warning")
+
+    try:
+        if (dispname!=None and amount!=None and frequency!=None and start_date!=None):
+            if revid!="":
+                try:
+                    rev=Rev.objects.get(id=revid)
+                    rev.display_name=dispname
+                    rev.amount=amount
+                    rev.frequency=frequency
+                    rev.start_date=start_date
+                    if end_date!=None: rev.end_date=end_date
+                    rev.save()
+                except:
+                    flash("Unable to update existing rev object.", category="error")
+            if revid=="":
+                try:
+                    rev=Rev(display_name=dispname, 
+                    amount=amount, 
+                    frequency=frequency, 
+                    start_date=start_date)
+                    rev.save()
+                    acct.rev_ids.append(rev.id)
+                    acct.save()
+                except:
+                    flash("Unable to create new rev object.", category="warning")
+
+    except:
+        flash("Ensure all fields are filled in before submitting.", category="warning")
+
+    try:
+        rev
+    except NameError: rev=None
+
+    return render_template("revenue.html", rev=rev, acct=acct, user=user, ptx=ptx, revid=revid)
