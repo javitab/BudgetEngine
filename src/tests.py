@@ -19,12 +19,16 @@ if __name__=='__main__':
         """
         Create a new test user
         """
+        first_name=fake.first_name()
+        last_name=fake.last_name()
+        userid=str(first_name+"."+last_name).lower()
+        email=userid+"@test.com"
         newUser = User(
-            userid=fake.user_name(), 
-            email=fake.email(), 
-            first_name=fake.first_name(), 
-            last_name=fake.last_name(), 
-            password=fake.password(), 
+            userid=userid,
+            email=email, 
+            first_name=first_name, 
+            last_name=last_name, 
+            password="pbkdf2:sha256:260000$dDxECjiuG3D25eUp$ba89e579b08c476f3db515fa9bfcd3814acc3ed6d047abff2b7fd4bb3d679e5b", 
             timezone=fake.timezone()
         )
         newUser.save()
@@ -32,7 +36,7 @@ if __name__=='__main__':
         """
         Create test accounts for newUser
         """
-        for _ in range(1):
+        for _ in range(3):
             newAcct = Acct(
                 bank_name=fake.random_element(elements=['Chase','Wells Fargo','Citi','Bank of America','PNC','US Bank','USAA','Capital One','Connex Credit Union']),
                 bank_routing_number=fake.aba(), 

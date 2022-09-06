@@ -1,7 +1,4 @@
 from decimal import Decimal
-from os import error
-from pprint import PrettyPrinter
-from textwrap import indent
 from flask import Blueprint,render_template,request,flash,redirect,url_for
 from flask_login import login_required, current_user
 from BudgetEngine.data import *
@@ -12,26 +9,84 @@ def home():
     return render_template("home.html")
 
 @views.route('/accts', methods=['GET','POST'])
+@login_required
 def accts():
     accountid = request.args.get('acct')
-    userid = request.args.get('user')
-    if accountid != None:
-        acct=Acct.objects.get(id=ObjectId(accountid))
-        ptx=acct.active_ptx_log_id.posted_txs
-    else:
-        acct=[]
-        ptx=[]
-    if userid != None:
-        user=User.objects.get(id=ObjectId(userid))
-    else:
-        user=[]
+    acctedit = request.args.get('acctedit')
+    acctid_post = request.form.get('acctid_post')
+    acctname_post = request.form.get('acctname_post')
+    acctinst_post = request.form.get('acctinst_post')
+    acctnumber_post = request.form.get('acctnumber_post')
+    acctrouting_post = request.form.get('acctrouting_post')
+    acctlowbal_post = request.form.get('acctlowbal_post')
+    acctstartbalance_post = request.form.get('acctstartbalance_post')
 
-    return render_template("accts.html", acct=acct, user=user, ptx=ptx)
+    user=current_user
+
+    if accountid!='' or accountid!=None:
+        try:
+            acct=Acct.objects.get(id=ObjectId(accountid))
+            ptx=acct.active_ptx_log_id.posted_txs
+        except:
+            acct=[]
+            ptx=[]
+
+    if request.method == 'POST':
+        print(accountid)
+        if acctedit=='true' and accountid!=None:
+            try:
+                acct.account_display_name=acctname_post
+                acct.bank_name=acctinst_post
+                acct.bank_account_number=acctnumber_post
+                acct.bank_routing_number=acctrouting_post
+                acct.low_balance_alert=acctlowbal_post
+                acct.save()
+            except Exception as e:
+                flash('Error updating account', category='error')
+                print(e)
+        if acctedit=='true' and accountid==None:
+            try:
+                newacct=Acct(
+                    account_display_name=acctname_post,
+                    bank_name=acctinst_post,
+                    bank_account_number=acctnumber_post,
+                    bank_routing_number=acctrouting_post,
+                    low_balance_alert=acctlowbal_post,
+                    current_balance=acctstartbalance_post
+                )
+                newacct.save()
+                newPtxLog=PtxLog()
+                newPtxLog.save()
+                newacct.history_ptx_log_ids.append(newPtxLog.id)
+                newacct.active_ptx_log_id=newPtxLog.id
+                newacct.save()
+                user.acctIds.append(newacct.id)
+                user.save()
+            except Exception as e:
+                flash('Error creating account', category='error')
+                print(e)
+
+
+    try:
+        print(
+                "_id: ", acct.id,
+                "Display Name: ", acct.account_display_name,
+                "Institution: ", acct.bank_name,
+                "Account Number: ", acct.bank_account_number,
+                "Routing Number: ", acct.bank_routing_number,
+                "Low Balance: ", acct.low_balance_alert
+            )
+    except: pass
+    return render_template("accts.html", acct=acct, user=user, ptx=ptx, acctedit=acctedit)
+
+@views.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @views.route('/newtx', methods=['GET','POST'])
+@login_required
 def newtx():
     accountid = request.args.get('acct')
-    userid = request.args.get('user')
     txtype_arg = request.args.get('txtype_arg')
     txtype_post = request.form.get('txtype_post')
     typeid_arg = request.args.get('typeid_arg')
@@ -41,16 +96,15 @@ def newtx():
     txdate_post = request.form.get('txdate_post')
     txmemo_post = request.form.get('txmemo_post')
 
+    user=current_user
+
     if accountid != None:
         acct=Acct.objects.get(id=ObjectId(accountid))
         ptx=acct.active_ptx_log_id.posted_txs
     else:
         acct=[]
         ptx=[]
-    if userid != None:
-        user=User.objects.get(id=ObjectId(userid))
-    else:
-        user=[]
+
     try: txtype_post
     except NameError: txtype_post=None
     try: txtype_arg
@@ -117,7 +171,6 @@ def newtx():
     ###
 
     ### Prepare and validate input data
-    print("Pre Verify: ",txdate_post,txmemo_post,txamount_post,txdebit_post,typeid,txtype)
     try:
         try:
             postDate=convDate(txdate_post)
@@ -161,10 +214,6 @@ def newtx():
         except:
             raise Exception("Balance invalid.")
 
-        try: 
-            print("Post-Verify: postDate: ",postDate,"postMemo: ", postMemo, "postAmount: ",postAmount,"postTxType: ", postTxType,"postAdHoc: ", postAdHoc,"postBalance: ", postBalance)
-        except:
-            raise Exception("Invalid or missing values.")
     except:
        flash("Please fill in missing values before clicking submit.", category="warning")
 
@@ -193,15 +242,16 @@ def newtx():
                 rev.save()
             flash("Transaction successfully added.", category="success")
             return render_template("accts.html", acct=acct, user=user, ptx=ptx)
-    except:
-        pass
+    except Exception as e:
+        flash("Unable to write transaction to database. Please try again.", category="danger")
+        print(e)
 
     return render_template("newtx.html", acct=acct, user=user, ptx=ptx, txtype=txtype, typeid=typeid, typeid_options=typeid_options, txTypeData=txTypeData)
 
 @views.route('/expense', methods=['GET','POST'])
+@login_required
 def expense():
     accountid = request.args.get('acct')
-    userid = request.args.get('user')
     expid_arg = request.args.get('expid_arg')
     expid_post = request.form.get('expid_post')
     dispname_arg = request.args.get('dispname_arg')
@@ -219,11 +269,11 @@ def expense():
     ### Evaluating arguments received
     ###
 
+    user=current_user
+
     if accountid!=None:
         acct=Acct.objects.get(id=accountid)
         ptx=acct.active_ptx_log_id.posted_txs
-    if userid!=None:
-        user=User.objects.get(id=userid)
     if expid_post!=None:
         expid=expid_post
         expid_arg=None
@@ -278,7 +328,7 @@ def expense():
 
     try:
         if (dispname!=None and amount!=None and frequency!=None and start_date!=None):
-            if (expid!=None):
+            if (expid!=""):
                 print("expid: ",type(expid),"dispname: ",dispname,"amount: ",amount,"frequency: ",frequency,"start_date: ",start_date,"end_date: ",end_date)
                 try:
                     exp=Exp.objects.get(id=expid)
@@ -307,9 +357,9 @@ def expense():
 
     
 @views.route('/revenue', methods=['GET','POST'])
+@login_required
 def revenue():
     accountid = request.args.get('acct')
-    userid = request.args.get('user')
     revid_arg = request.args.get('revid_arg')
     revid_post = request.form.get('revid_post')
     dispname_arg = request.args.get('dispname_arg')
@@ -327,11 +377,11 @@ def revenue():
     ### Evaluating arguments received
     ###
 
+    user=current_user
+
     if accountid!=None:
         acct=Acct.objects.get(id=accountid)
         ptx=acct.active_ptx_log_id.posted_txs
-    if userid!=None:
-        user=User.objects.get(id=userid)
     if revid_post!=None:
         revid=revid_post
         revid_arg=None

@@ -9,6 +9,7 @@ import calendar as cal
 import os
 from mongoengine import *
 from bson import ObjectId
+from flask_login import UserMixin
 
 #Importing Configuration File
 import BudgetEngine.config as config
@@ -217,8 +218,8 @@ class Acct(Document):
     bank_account_number=StringField(max_length=50, required=True)
     account_display_name=StringField(max_length=50, required=True)
     current_balance=DecimalField(required=True)
-    low_balance_alert=DecimalField(required=True)
-    tx_last_posted=DateTimeField(required=True)
+    low_balance_alert=DecimalField()
+    tx_last_posted=DateTimeField()
     rev_ids=ListField((ReferenceField(Rev)))
     exp_ids=ListField((ReferenceField(Exp)))
     active_ptx_log_id=ReferenceField(PtxLog)
@@ -228,15 +229,18 @@ class Acct(Document):
         'indexes': ['rev_ids','exp_ids','active_ptx_log_id','history_ptx_log_ids']
     }
 
-class User(Document):
+class User(UserMixin, Document):
     userid = StringField(max_length=30, required=True, unique=True)
     email = EmailField(unique=True, required=True)
     first_name = StringField(max_length=50, required=True)
     last_name = StringField(max_length=50, required=True)
-    password = StringField(max_length=50, required=True)
+    password = StringField(max_length=250, required=True)
     timezone = StringField(max_length=50, required=True)
     acctIds = ListField((ReferenceField(Acct)))
 
     meta = {
         'indexes': ['userid', 'email']
     }
+
+    def UserList():
+        return User.objects.get()

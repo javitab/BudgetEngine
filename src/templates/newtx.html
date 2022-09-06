@@ -1,5 +1,5 @@
 {% extends "accts.html" %}
-{% block title %}Accts{% endblock %}
+{% block title %}New Transaction{% endblock %}
 
 
 {% block pretable %}
@@ -25,7 +25,7 @@
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Exp Tx</a>
             <ul class="dropdown-menu">
                 {% for i in acct.exp_ids %}
-                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=exp&typeid_arg={{i.id}}">New {{i.display_name}}</a></li>
+                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=exp&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
                 {%endfor%}
               </ul>
           </li>

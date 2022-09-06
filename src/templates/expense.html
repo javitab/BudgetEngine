@@ -1,5 +1,5 @@
 {% extends "accts.html" %}
-{% block title %}Accts{% endblock %}
+{% block title %}Expense{% endblock %}
 
 
 {% block pretable %}
@@ -15,6 +15,7 @@
     <div class="input-group mb-3">
         <span class="input-group-text">_id</span>
         <input type="text" class="form-control" id="expid_post" name="expid_post" placeholder="-" value="{{exp.id}}" readonly>
+        <span class="input-group-text">Name</span>
         <input type="text" class="form-control" id="dispname_post" name="dispname_post" placeholder="Expense Name" value="{{exp.display_name}}">
     </div>
     <div class="input-group mb-3">
