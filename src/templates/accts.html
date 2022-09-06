@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Accts{% endblock %}
+
+
+{% block content %}
+<br>
+{% if acct==[] %}
+<h3>Viewing transactions in *No Account Selected*</h3>
+{% else %}
+<h3>Viewing transactions in {{acct.account_display_name}}</h3>
+{% endif %}
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    {% if acct==[] %}
+    <a class="nav-link active" aria-current="page" href="#">No Account Selected</a>
+    {% else %}
+    <a class="nav-link active" aria-current="page" href="/accts?acct={{acct.id}}">{{acct.account_display_name}}</a>
+    {% endif %}
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/newtx?acct={{acct.id}}&txtype_arg=adhoc" role="button">New Tx</a>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Accounts</a>
+    <ul class="dropdown-menu">
+      {% for i in user.acctIds %}
+      <li><a class="dropdown-item" href="/accts?acct={{i.id}}">{{i.account_display_name}}</a></li>
+      {%endfor%}
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="/accts?acctedit=true">Create New Account</a></li>
+      <li><a class="dropdown-item" href="/accts?acct={{acct.id}}&acctedit=true">Edit This Account</a></li>
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-revanded="false">Revenues</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.rev_ids %}
+        <li><a class="dropdown-item" href="/revenue?acct={{acct.id}}&revid_arg={{i.id}}">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/revenue?acct={{acct.id}}">Create New Revenue</a></li>
+      </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Expenses</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.exp_ids %}
+        <li><a class="dropdown-item" href="/expense?acct={{acct.id}}&expid_arg={{i.id}}">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/expense?acct={{acct.id}}">Create New Expense</a></li>
+      </ul>
+  </li>
+  </li><li class="nav-item">
+    <a class="nav-link dropdown-toggle disabled" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Projections</a>
+    <ul class="dropdown-menu">
+        {% for i in projs %}
+        <li><a class="dropdown-item" href="#"></a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Create New Projection</a></li>
+      </ul>
+  </li> </li>
+
+  {% block pretable %}
+  {% endblock %}
+
+{% if acctedit=="true" %}
+<form method="POST" id="acctForm">
+  <label for="acctForm">Modify Account record</label>
+  <div class="input-group mb-3">
+    <span class="input-group-text">_id</span>
+    <input type="text" class="form-control" name="acctid_post" value="{{acct.id}}" placeholder="-" readonly>
+    <span class="input-group-text">Name</span>
+    <input type="text" class="form-control" name="acctname_post" value="{{acct.account_display_name}}" placeholder="-">
+  </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text">Institution</span>
+    <input type="text" class="form-control" name="acctinst_post" value="{{acct.bank_name}}" placeholder="-">
+  </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text">account</span>
+    <input type="text" class="form-control" name="acctnumber_post" value="{{acct.bank_account_number}}" placeholder="-">
+    <span class="input-group-text">routing</span>
+    <input type="text" class="form-control" name="acctrouting_post" value="{{acct.bank_routing_number}}" placeholder="-">
+    <span class="input-group-text">Low Balance</span>
+    <input type="text" class="form-control" name="acctlowbal_post" value="{{acct.low_balance_alert}}" placeholder="-">
+    <span class="input-group-text">Balance</span>
+    {% if acct==[] %}
+    <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-">
+    {% else %}
+    <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-" readonly>
+    {% endif %}
+  <div class="input-group mb-3">
+    <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
+  </div>
+</form>
+{%endif%}
+
+<table class="table table-success table-striped-columns table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">_id</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">TxType</th>
+            <th scope="col">AdHoc</th>
+            <th scope="col">Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for i in ptx %}
+            <tr>
+                <td>{{"#"}}</td>
+                <td>{{i.txID}}</td>
+                <td>{{i.memo}}</td>
+                {%if i.tx_type=="debit"%}
+                <td>{{"-$%.2f"|format(i.amount)}}</td>
+                {%else%}
+                <td>{{"$%.2f"|format(i.amount)}}</td>
+                {%endif%}
+                <td>{{i.date}}</td>
+                <td>{{i.tx_type}}</td>
+                <td>{{i.ad_hoc}}</td>
+                <td>{{i.balance}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+{% endblock %}

@@ -4,3 +4,7 @@ tabulate
 matplotlib
 flask
 flask-login
+termcolor
+mongoengine
+faker
+prettytable

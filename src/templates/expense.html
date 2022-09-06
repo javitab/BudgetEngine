@@ -1,0 +1,68 @@
+{% extends "accts.html" %}
+{% block title %}Expense{% endblock %}
+
+
+{% block pretable %}
+
+<div class="container">
+        {% if expid != None %}
+        <h4>Expense - {{exp.display_name}}</h4>
+        {% else %}
+        <h4>Expense - *New*</h4>
+        {% endif %}
+    <form method="POST" id="expForm">
+    <label for="expForm" class="form-label">Modify Expense record</label>
+    <div class="input-group mb-3">
+        <span class="input-group-text">_id</span>
+        <input type="text" class="form-control" id="expid_post" name="expid_post" placeholder="-" value="{{exp.id}}" readonly>
+        <span class="input-group-text">Name</span>
+        <input type="text" class="form-control" id="dispname_post" name="dispname_post" placeholder="Expense Name" value="{{exp.display_name}}">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="amount_post" name="amount_post" placeholder="amount (###.##)" value="{{exp.amount}}">
+        <span class="input-group-text">↻</span>
+        <select class="form-select" id="frequency_post" name="frequency_post">
+            {% if expid==None %}
+            <option selected>Frequency...</option>
+            {% else %}
+            <option value="{{exp.frequency}}"selected>{{exp.frequency}}</option>
+            {% endif %}
+            <option value="weekly">weekly</option>
+            <option value="biweekly">biweekly</option>
+            <option value="monthly">monthly</option>
+            <option value="quarterly">quarterly</option>
+            <option value="annually">annually</option>
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">📅</span>
+        <span class="input-group-text">Start</span>
+        <input type="text" class="form-control" id="start_date_post" name="start_date_post" placeholder="YYYY-MM-DD [required]" value="{{exp.start_date}}">
+        <label class="form-label">  </label>
+        <span class="input-group-text">End</span>
+        {% if exp.end_date==None %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]">
+        {% elif expid==None %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]">
+        {% else %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]" value="{{exp.end_date}}">
+        {% endif %}
+    </div>
+    {% if exp %}
+    <div class="input-group mb-3">
+        <span class="input-group-text">📅</span>
+        <span class="input-group-text">Next</span>
+        <input type="text" class="form-control" placeholder="-" value="{{exp.next_date()}}" readonly>
+        <span class="input-group-text">Last</span>
+        <input type="text" class="form-control"placeholder="-" value="{{exp.last_posted_date}}" readonly>
+        <span class="input-group-text">Created</span>
+        <input type="text" class="form-control"placeholder="-" value="{{exp.time_created}}" readonly>
+    </div>
+    {% endif %}
+    <div class="input-group mb-3">
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    </form>
+</div>
+{% endblock %}

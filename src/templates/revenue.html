@@ -1,0 +1,68 @@
+{% extends "accts.html" %}
+{% block title %}Revenue{% endblock %}
+
+
+{% block pretable %}
+
+<div class="container">
+        {% if revid != None %}
+        <h4>Revenue - {{rev.display_name}}</h4>
+        {% else %}
+        <h4>Revenue - *New*</h4>
+        {% endif %}
+    <form method="POST" id="revForm">
+    <label for="revForm" class="form-label">Modify Revenue record</label>
+    <div class="input-group mb-3">
+        <span class="input-group-text">_id</span>
+        <input type="text" class="form-control" id="revid_post" name="revid_post" placeholder="-" value="{{rev.id}}" readonly>
+        <span class="input-group-text">Name</span>
+        <input type="text" class="form-control" id="dispname_post" name="dispname_post" placeholder="Revenue Name" value="{{rev.display_name}}">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="amount_post" name="amount_post" placeholder="amount (###.##)" value="{{rev.amount}}">
+        <span class="input-group-text">↻</span>
+        <select class="form-select" id="frequency_post" name="frequency_post">
+            {% if revid==None %}
+            <option selected>Frequency...</option>
+            {% else %}
+            <option value="{{rev.frequency}}"selected>{{rev.frequency}}</option>
+            {% endif %}
+            <option value="weekly">weekly</option>
+            <option value="biweekly">biweekly</option>
+            <option value="monthly">monthly</option>
+            <option value="quarterly">quarterly</option>
+            <option value="annually">annually</option>
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">📅</span>
+        <span class="input-group-text">Start</span>
+        <input type="text" class="form-control" id="start_date_post" name="start_date_post" placeholder="YYYY-MM-DD [required]" value="{{rev.start_date}}">
+        <label class="form-label">  </label>
+        <span class="input-group-text">End</span>
+        {% if rev.end_date==None %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]">
+        {% elif revid==None %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]">
+        {% else %}
+        <input type="text" class="form-control" id="end_date_post" name="end_date_post" placeholder="YYYY-MM-DD [optional]" value="{{rev.end_date}}">
+        {% endif %}
+    </div>
+    {% if rev %}
+    <div class="input-group mb-3">
+        <span class="input-group-text">📅</span>
+        <span class="input-group-text">Next</span>
+        <input type="text" class="form-control" placeholder="-" value="{{rev.next_date()}}" readonly>
+        <span class="input-group-text">Last</span>
+        <input type="text" class="form-control"placeholder="-" value="{{rev.last_posted_date}}" readonly>
+        <span class="input-group-text">Created</span>
+        <input type="text" class="form-control"placeholder="-" value="{{rev.time_created}}" readonly>
+    </div>
+    {% endif %}
+    <div class="input-group mb-3">
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    </form>
+</div>
+{% endblock %}
