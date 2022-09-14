@@ -6,9 +6,8 @@ Initiating connection to database and pulling base dependencies
 from datetime import datetime as dt
 from datetime import timedelta
 import calendar as cal
-import os
+from sqlite3 import Date
 from mongoengine import *
-from bson import ObjectId
 from flask_login import UserMixin
 
 #Importing Configuration File
@@ -116,44 +115,6 @@ def txIterate(frequency: str, inputdate: dt):
     x = startdate + delta
     return x
 
-#defining how to handle monies
-
-def nm(input: float):
-    """NiceMoney, takes a float input, rounds to 2 decimal places, returns as float
-
-    Args:
-        input (float): input numerical value
-
-    Returns:
-        float: return float rounded to .00
-    """
-    x = round(input,2)
-    return x
-
-#defining internal functions
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
-
-def menuGen(actions: list,mnuName: str,clear=1):
-    """This function takes an input of a list of actions and generates a menu with am output of action
-
-    Args:
-        actions (list): actions to perform
-        mnuName (str): name of menu to display
-        clear (int, optional): If 1, clears the screen before and after showing menu. Defaults to 1.
-    """
-    if clear == 1: cls()
-    print("\n")
-    print(("=== Printing available options for %s===") % mnuName)
-    for i in actions:
-        print(i)
-    print("Q: Quit")
-    action = input("What would you like to do? ")
-    print("\n")
-    if action == "Q" or action == 'q': action = 'Q'
-    if clear == 1: cls()
-    return action
-
 ###                      ###
 ### Defining data models ###
 ###                      ###
@@ -244,3 +205,8 @@ class User(UserMixin, Document):
 
     def UserList():
         return User.objects.get()
+
+class Projection(Document):
+    projection_acct=ReferenceField(Acct,required=True)
+    start_date=DateField(required=True,default=dt.utcnow)
+    end_date=DateField(required=True)

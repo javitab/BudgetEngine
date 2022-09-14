@@ -1,11 +1,7 @@
-from datetime import datetime
-from os import read
-from pprint import PrettyPrinter
 from faker import Faker
 import random
 
 from BudgetEngine.data import *
-from prettytable import PrettyTable
 from bson.objectid import ObjectId
 
 
