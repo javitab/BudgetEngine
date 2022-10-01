@@ -4,14 +4,25 @@ import random
 from BudgetEngine.data import *
 from bson.objectid import ObjectId
 
+'''
+Defining test parameters
+'''
 
+#Number of test users to create
+testUsers=1
+
+#Number of test accounts per user
+testAccts=1
+
+#Number of text expenses per user
+testExpenses=5
 
 fake=Faker()
 Faker.seed(random.Random().randint(1,1000))
 
 if __name__=='__main__':
 
-    for _ in range(1):
+    for _ in range(testUsers):
         """
         Create a new test user
         """
@@ -32,7 +43,7 @@ if __name__=='__main__':
         """
         Create test accounts for newUser
         """
-        for _ in range(3):
+        for _ in range(testAccts):
             newAcct = Acct(
                 bank_name=fake.random_element(elements=['Chase','Wells Fargo','Citi','Bank of America','PNC','US Bank','USAA','Capital One','Connex Credit Union']),
                 bank_routing_number=fake.aba(), 
@@ -60,7 +71,7 @@ if __name__=='__main__':
             newAcct.rev_ids.append(newRev.id)
             newAcct.save()
             
-            for _ in range(5):
+            for _ in range(testExpenses):
                 newExp = Exp(
                     display_name=fake.random_element(elements=['Rent','Netflix','Spotify','Cellphone','Electric','Gas','Water','Mortgage','Car Loan']),
                     amount=fake.pydecimal(positive=True, min_value=1, max_value=100, left_digits=3, right_digits=2),
@@ -145,3 +156,5 @@ if __name__=='__main__':
             )
             newProjection.save()
             newProjection.runProjection()
+            for i in newProjection.projected_txs:
+                print(i._data)
