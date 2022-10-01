@@ -6,7 +6,7 @@ from mongoengine import *
 from .acct import *
 from .exp import *
 from .rev import *
-from.func import *
+from .func import *
 
 
 class ProjectionRevTx(EmbeddedDocument):
