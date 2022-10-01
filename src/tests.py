@@ -136,3 +136,12 @@ if __name__=='__main__':
             print("### Current active_ptx_log_id: ",ptxLog.id)
             for tx in ptxLog.posted_txs:
                 print(tx.date, tx.memo, tx.amount, tx.tx_type, tx.balance)
+        #Running projection for each account for user
+        for acct in newUser.acctIds:
+            newProjection=Projection(
+                projection_acct=acct,
+                start_date=dt.utcnow(),
+                end_date=dt.utcnow().__add__(timedelta(days=90))
+            )
+            newProjection.save()
+            newProjection.runProjection()
