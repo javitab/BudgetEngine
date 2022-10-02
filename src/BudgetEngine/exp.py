@@ -1,6 +1,6 @@
 from mongoengine import *
 from datetime import datetime as dt
-from .func import txIterate
+from .dtfunc import txIterate
 
 class Exp(Document):
     """exp class for creating new and updating existing accounts

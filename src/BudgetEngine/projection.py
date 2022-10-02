@@ -1,18 +1,17 @@
 from datetime import datetime as dt
 from datetime import timedelta
-from typing import Sequence
 from mongoengine import *
 
 
 from .acct import *
 from .exp import *
 from .rev import *
-from .func import *
+from .dtfunc import *
 
 class PTx(EmbeddedDocument):
     seq=IntField(required=True)
     item_id=StringField()
-    date=DateTimeField(required=True)
+    date=DateField(required=True)
     memo=StringField(max_length=100, required=True)
     amount=DecimalField(required=True)
     tx_type=StringField(max_length=10, required=True,choices=["debit","credit"])
@@ -41,7 +40,8 @@ class ProjectionExpTx(DynamicEmbeddedDocument):
     }
 
 class Projection(Document):
-    projection_acct=ReferenceField(Acct,required=True)
+    projection_acct=ReferenceField(Acct)
+    disp_name=StringField(max_length=100)
     start_date=DateField(required=True,default=dt.utcnow)
     end_date=DateField(required=True)
     projected_txs=EmbeddedDocumentListField(PTx)
@@ -57,9 +57,12 @@ class Projection(Document):
         Iterate through all revenue objects and create a list of projected revenue transactions
         """
         #Create list of revenues for each day
+
         for rev in self.projection_acct.rev_ids:
             iterDate=rev.next_date()
-            while iterDate<=self.end_date:
+            print("iterDate type: ",type(iterDate),iterDate)
+            print("end_date type: ",type(self.end_date),self.end_date)
+            while iterDate.date<=self.end_date:
                 if iterDate not in rev.exclusion_dates:
                     iterDateTime=dt.combine(iterDate, dt.min.time())
                     self.rev_txs.create(
@@ -98,7 +101,6 @@ class Projection(Document):
         self.iterateExps()
         self.balance=self.projection_acct.current_balance
         iterDate=self.start_date
-        print("Starting iterDate loop for projecting transactions")
         seq=0
         while iterDate<=self.end_date:
             for revtx in self.rev_txs:

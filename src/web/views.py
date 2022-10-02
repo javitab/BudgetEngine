@@ -2,12 +2,19 @@ from decimal import Decimal
 from bson import ObjectId
 from flask import Blueprint,render_template,request,flash,redirect,url_for
 from flask_login import login_required, current_user
+
+from ..BudgetEngine.projection import Projection
 from ..BudgetEngine.acct import Acct,PtxLog
 from ..BudgetEngine.exp import Exp
 from ..BudgetEngine.rev import Rev
-from ..BudgetEngine.func import convDate
+from ..BudgetEngine.user import User
+from ..BudgetEngine.dtfunc import convDate
+from ..BudgetEngine.datafunc import acctProjDict
+
+from .webfunc import *
 
 views = Blueprint('views', __name__)
+
 
 @views.route('/')
 def home():
@@ -35,6 +42,7 @@ def accts():
         except:
             acct=[]
             ptx=[]
+
 
     if request.method == 'POST':
         print(accountid)
@@ -82,11 +90,24 @@ def accts():
                 "Low Balance: ", acct.low_balance_alert
             )
     except: pass
-    return render_template("accts.html", acct=acct, user=user, ptx=ptx, acctedit=acctedit)
+
+    if acct==[]:
+        currUser=User.objects.get(id=current_user.id)
+        accts=currUser.acctIds
+        for i in accts:
+            acct=i
+        ptx=acct.active_ptx_log_id.posted_txs
+
+    return render_template("accts.html", acct=acct, user=user, ptx=ptx, acctedit=acctedit, projs=acctProjDict(acct_id=acct.id))
 
 @views.route('/profile')
 def profile():
-    return render_template("profile.html")
+
+    declareGetArgs=['message']
+
+    GETargs=getArgs(declareGetArgs)
+
+    return render_template("profile.html", message=GETargs.message)
 
 @views.route('/newtx', methods=['GET','POST'])
 @login_required
@@ -472,3 +493,4 @@ def revenue():
     except NameError: rev=None
 
     return render_template("revenue.html", rev=rev, acct=acct, user=user, ptx=ptx, revid=revid)
+

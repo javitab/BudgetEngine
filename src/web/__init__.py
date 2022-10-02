@@ -8,10 +8,12 @@ def create_app():
     from .views import views
     from .auth import auth
     from .admin import admin
+    from .projections import project
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(project, url_prefix='/projection')
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

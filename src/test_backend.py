@@ -7,7 +7,7 @@ import random
 
 from BudgetEngine.data import *
 from BudgetEngine.user import User
-from BudgetEngine.acct import Acct,PtxLog,Tx
+from BudgetEngine.acct import Acct,PtxLog
 from BudgetEngine.exp import Exp
 from BudgetEngine.rev import Rev
 from BudgetEngine.projection import Projection
@@ -165,13 +165,18 @@ if __name__=='__main__':
                 print(tx.date, tx.memo, tx.amount, tx.tx_type, tx.balance)
         #Running projection for each account for user
         for acct in newUser.acctIds:
+            projAcct=Acct.objects.get(id=acct)
             newProjection=Projection(
-                projection_acct=acct,
+                disp_name=f"Projection through {dt.now().__add__(timedelta(days=90))}",
+                projection_acct=projAcct.id,
                 start_date=dt.utcnow(),
                 end_date=dt.utcnow().__add__(timedelta(days=90))
             )
             newProjection.save()
             newProjection.runProjection()
+            print(newProjection.id)
+            projAcct.projections.append(newProjection.id)
+            projAcct.save()
             for i in newProjection.projected_txs:
                 print(i._data)
             

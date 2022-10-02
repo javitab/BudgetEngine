@@ -1,7 +1,7 @@
 from mongoengine import *
 from datetime import datetime as dt
 
-from .func import txIterate
+from .dtfunc import txIterate
 
 class Rev(Document):
     display_name=StringField(max_length=50, required=True)

@@ -3,5 +3,8 @@
 {% block content %}
 <h1 class="title">
   Welcome, {{current_user.first_name}}!
+  {% if message!=None %}
+  Your message is {{message}}
+  {% endif %}
 </h1>
 {% endblock %}

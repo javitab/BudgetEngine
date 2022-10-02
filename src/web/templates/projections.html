@@ -5,9 +5,9 @@
 {% block content %}
 <br>
 {% if acct==[] %}
-<h3>Viewing transactions in *No Account Selected*</h3>
+<h3>Viewing projection in *No Account Selected*</h3>
 {% else %}
-<h3>Viewing transactions in {{acct.account_display_name}}</h3>
+<h3>Viewing projection in {{acct.account_display_name}}</h3>
 {% endif %}
 <ul class="nav nav-tabs">
   <li class="nav-item">
@@ -55,48 +55,65 @@
     <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="/#" role="button" aria-expanded="false">Projections</a>
     <ul class="dropdown-menu">
         {% for i in projs %}
-        <li><a class="dropdown-item" href="projection/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
+        <li><a class="dropdown-item" href="/projection/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="projection/new?acct_id={{acct.id}}">Create New Projection</a></li>
+        <li><a class="dropdown-item" href="/projection/new?acct_id={{acct.id}}">Create New Projection</a></li>
       </ul>
   </li> </li>
 
   {% block pretable %}
   {% endblock %}
 
-{% if acctedit=="true" %}
+  {% if action=='view' %}
 <form method="POST" id="acctForm">
-  <label for="acctForm">Modify Account record</label>
+  <label for="acctForm">Create New Projection</label>
   <div class="input-group mb-3">
     <span class="input-group-text">_id</span>
-    <input type="text" class="form-control" name="acctid_post" value="{{acct.id}}" placeholder="-" readonly>
+    <input type="text" class="form-control" name="proj_id" value="{{proj.id}}" placeholder="-" readonly>
     <span class="input-group-text">Name</span>
-    <input type="text" class="form-control" name="acctname_post" value="{{acct.account_display_name}}" placeholder="-">
+    <input type="text" class="form-control" name="proj_disp_name" value="{{proj.disp_name}}" placeholder="-" readonly>
   </div>
   <div class="input-group mb-3">
-    <span class="input-group-text">Institution</span>
-    <input type="text" class="form-control" name="acctinst_post" value="{{acct.bank_name}}" placeholder="-">
+    <span class="input-group-text">Account Name</span>
+    <input type="text" class="form-control" name="acct_name" value="{{acct.account_display_name}}" placeholder="-" readonly>
   </div>
   <div class="input-group mb-3">
-    <span class="input-group-text">account</span>
-    <input type="text" class="form-control" name="acctnumber_post" value="{{acct.bank_account_number}}" placeholder="-">
-    <span class="input-group-text">routing</span>
-    <input type="text" class="form-control" name="acctrouting_post" value="{{acct.bank_routing_number}}" placeholder="-">
-    <span class="input-group-text">Low Balance</span>
-    <input type="text" class="form-control" name="acctlowbal_post" value="{{acct.low_balance_alert}}" placeholder="-">
-    <span class="input-group-text">Balance</span>
-    {% if acct==[] %}
-    <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-">
-    {% else %}
-    <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-" readonly>
-    {% endif %}
-  <div class="input-group mb-3">
-    <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
+    <span class="input-group-text">Start Date</span>
+    <input type="text" class="form-control" name="start_date" value="{{proj.start_date}}" placeholder="-" readonly>
+    <span class="input-group-text">End Date</span>
+    <input type="text" class="form-control" name="end_date" value="{{proj.end_date}}" placeholder="-" readonly>
+    <span class="input-group-text">Final Balance</span>
+    <input type="text" class="form-control" name="balance" value="{{proj.balance}}" placeholder="-" readonly>
   </div>
 </form>
-{%endif%}
-
+{% elif action=='new' %}
+<form method="POST" id="acctForm">
+    <label for="acctForm">Create New Projection</label>
+    <div class="input-group mb-3">
+      <span class="input-group-text">_id</span>
+      <input type="text" class="form-control" name="proj_id" value="{{proj.id}}" placeholder="-" readonly>
+      <span class="input-group-text">Name</span>
+      <input type="text" class="form-control" name="proj_disp_name" value="{{proj.disp_name}}" placeholder="-">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Account Name</span>
+      <input type="text" class="form-control" name="acct_name" value="{{acct.account_display_name}}" placeholder="-" readonly>
+      <input type="hidden" class="form-control" name="acct_id" value="{{acct.id}}">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Start Date</span>
+      <input type="text" class="form-control" name="start_date" value="{{proj.start_date}}" placeholder="-">
+      <span class="input-group-text">End Date</span>
+      <input type="text" class="form-control" name="end_date" value="{{proj.end_date}}" placeholder="-">
+      <span class="input-group-text">Final Balance</span>
+      <input type="text" class="form-control" name="balance" value="{{proj.balance}}" placeholder="-">
+    </div>
+    <div class="input-group mb-3">
+        <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
+    </div>
+  </form>
+{% endif %}
 <table class="table table-success table-striped-columns table-hover">
     <thead>
         <tr>
@@ -111,10 +128,10 @@
         </tr>
         </thead>
         <tbody>
-            {% for i in ptx %}
+            {% for i in proj.projected_txs %}
             <tr>
                 <td>{{"#"}}</td>
-                <td>{{i.txID}}</td>
+                <td>{{i.seq}}</td>
                 <td>{{i.memo}}</td>
                 {%if i.tx_type=="debit"%}
                 <td>{{"-$%.2f"|format(i.amount)}}</td>

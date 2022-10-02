@@ -66,7 +66,7 @@ def convDate(inputdate: str):
     Returns:
         _type_: date as datetime object
     """
-    x = dt.strptime(inputdate,"%Y-%m-%d")
+    x = dt.strptime(inputdate,"%Y-%M-%d").date
     return x
 
 def txIterate(frequency: str, inputdate: dt):
@@ -96,3 +96,4 @@ def txIterate(frequency: str, inputdate: dt):
         startdate=convDate(startdate)
     x = startdate + delta
     return x
+
