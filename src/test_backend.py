@@ -1,7 +1,17 @@
+from bson.objectid import ObjectId
+from datetime import datetime as dt
+from datetime import timedelta
+
 from faker import Faker
 import random
 
 from BudgetEngine.data import *
+from BudgetEngine.user import User
+from BudgetEngine.acct import Acct,PtxLog,Tx
+from BudgetEngine.exp import Exp
+from BudgetEngine.rev import Rev
+from BudgetEngine.projection import Projection
+
 from bson.objectid import ObjectId
 
 '''
@@ -16,6 +26,9 @@ testAccts=1
 
 #Number of text expenses per user
 testExpenses=5
+
+#Number of days to generate test data for
+PtxLogDataDays=60
 
 fake=Faker()
 Faker.seed(random.Random().randint(1,1000))
@@ -92,10 +105,13 @@ if __name__=='__main__':
             
             #Generate data to PtxLog with expenses and revenues
 
-            for _ in range(30):
-                _date=dt.utcnow().__add__(timedelta(days=_)).strftime("%Y-%m-%d")
+            for _ in range(PtxLogDataDays):
+                _date=dt.utcnow().__add__(timedelta(days=_))
+                _date=dt.date(_date)
+                print("_date: ",_date)
                 for rev in newAcct.rev_ids:
                     rev=Rev.objects.get(id=rev)
+                    print("rev.next_date(): ",rev.next_date())
                     if rev.next_date()==_date:
                         newPtxLog.posted_txs.create(
                             txID=ObjectId(),
@@ -158,3 +174,4 @@ if __name__=='__main__':
             newProjection.runProjection()
             for i in newProjection.projected_txs:
                 print(i._data)
+            

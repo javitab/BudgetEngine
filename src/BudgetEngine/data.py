@@ -2,17 +2,16 @@
 Initiating connection to database and pulling base dependencies
 """
 
-
-
 from mongoengine import *
 
 
 #Importing Configuration File
-import BudgetEngine.config as config
+from . import config
+
 
 #Importing Data Models
-from BudgetEngine.projection import *
-from BudgetEngine.user import *
+from . import projection
+from . import user
 
 
 #getting environment variables

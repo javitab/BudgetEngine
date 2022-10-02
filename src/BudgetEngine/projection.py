@@ -101,12 +101,10 @@ class Projection(Document):
         print("Starting iterDate loop for projecting transactions")
         seq=0
         while iterDate<=self.end_date:
-            print(iterDate)
             for revtx in self.rev_txs:
                 revtxdate_=revtx.date
                 revtxdate=revtxdate_.date()
                 if revtxdate==iterDate:
-                    print(revtx._data)
                     seq=seq+1
                     self.projected_txs.create(
                         seq=seq,
@@ -125,7 +123,6 @@ class Projection(Document):
                 exptxdate_=exptx.date
                 exptxdate=exptxdate_.date()
                 if exptxdate==iterDate:
-                    print(exptx._data)
                     seq=seq+1
                     self.projected_txs.create(
                         seq=seq,

@@ -1,2 +1,1 @@
-import BudgetEngine.config
-import BudgetEngine.data
+from .user import User

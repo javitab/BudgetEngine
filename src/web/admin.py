@@ -1,7 +1,7 @@
 from bson import ObjectId
 from flask import Blueprint,render_template, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from BudgetEngine.data import *
+from ..BudgetEngine.user import User
 
 admin = Blueprint('admin', __name__)
 
