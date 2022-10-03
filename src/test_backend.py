@@ -5,12 +5,12 @@ from datetime import timedelta
 from faker import Faker
 import random
 
-from BudgetEngine.data import *
+
+from BudgetEngine.projection import Projection
 from BudgetEngine.user import User
 from BudgetEngine.acct import Acct,PtxLog
 from BudgetEngine.exp import Exp
 from BudgetEngine.rev import Rev
-from BudgetEngine.projection import Projection
 
 from bson.objectid import ObjectId
 
@@ -64,7 +64,9 @@ if __name__=='__main__':
                 account_display_name=fake.random_element(elements=['Checking','Savings','Joint','Expense']),
                 current_balance=fake.pydecimal(positive=True, min_value=1, max_value=100000, left_digits=6, right_digits=2),
                 low_balance_alert=fake.pydecimal(positive=True, min_value=1, max_value=1000, left_digits=4, right_digits=2), 
-                tx_last_posted=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None))
+                tx_last_posted=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None),
+                notes=fake.text(max_nb_chars=200)
+                )
             newAcct.save()
             newUser.acctIds.append(newAcct.id)
             newUser.save()
@@ -77,7 +79,8 @@ if __name__=='__main__':
                 display_name=fake.random_element(elements=['Day Job','Uber','Lyft','Instacart']),
                 amount=fake.pydecimal(positive=True, min_value=1, max_value=100000, left_digits=6, right_digits=2),
                 frequency="weekly",
-                start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None)
+                start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None),
+                notes=fake.text(max_nb_chars=200)
 
             )
             newRev.save()
@@ -89,7 +92,8 @@ if __name__=='__main__':
                     display_name=fake.random_element(elements=['Rent','Netflix','Spotify','Cellphone','Electric','Gas','Water','Mortgage','Car Loan']),
                     amount=fake.pydecimal(positive=True, min_value=1, max_value=100, left_digits=3, right_digits=2),
                     frequency="monthly",
-                    start_date=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None)
+                    start_date=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None),
+                    notes=fake.text(max_nb_chars=200)
                 )
                 newExp.save()
                 newAcct.exp_ids.append(newExp.id)
@@ -106,12 +110,10 @@ if __name__=='__main__':
             #Generate data to PtxLog with expenses and revenues
 
             for _ in range(PtxLogDataDays):
-                _date=dt.utcnow().__add__(timedelta(days=_))
+                _date=dt.now().__add__(timedelta(days=_))
                 _date=dt.date(_date)
-                print("_date: ",_date)
                 for rev in newAcct.rev_ids:
                     rev=Rev.objects.get(id=rev)
-                    print("rev.next_date(): ",rev.next_date())
                     if rev.next_date()==_date:
                         newPtxLog.posted_txs.create(
                             txID=ObjectId(),
@@ -167,16 +169,16 @@ if __name__=='__main__':
         for acct in newUser.acctIds:
             projAcct=Acct.objects.get(id=acct)
             newProjection=Projection(
-                disp_name=f"Projection through {dt.now().__add__(timedelta(days=90))}",
+                disp_name=f"Projection through {dt.now().__add__(timedelta(days=90)).date()}",
                 projection_acct=projAcct.id,
-                start_date=dt.utcnow(),
-                end_date=dt.utcnow().__add__(timedelta(days=90))
+                start_date=dt.now(),
+                end_date=dt.now().__add__(timedelta(days=90))
             )
             newProjection.save()
             newProjection.runProjection()
-            print(newProjection.id)
             projAcct.projections.append(newProjection.id)
             projAcct.save()
+            print("\n### Printing Projection for Acct: ",projAcct.account_display_name,"###")
             for i in newProjection.projected_txs:
-                print(i._data)
+                print(i.date, i.memo, i.amount, i.tx_type, i.balance)
             

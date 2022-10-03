@@ -23,6 +23,9 @@ def home():
 @views.route('/accts', methods=['GET','POST'])
 @login_required
 def accts():
+
+    declareVars=['notes']
+    POSTvars=postForm(declareVars)
     accountid = request.args.get('acct')
     acctedit = request.args.get('acctedit')
     acctid_post = request.form.get('acctid_post')
@@ -45,7 +48,6 @@ def accts():
 
 
     if request.method == 'POST':
-        print(accountid)
         if acctedit=='true' and accountid!=None:
             try:
                 acct.account_display_name=acctname_post
@@ -53,10 +55,10 @@ def accts():
                 acct.bank_account_number=acctnumber_post
                 acct.bank_routing_number=acctrouting_post
                 acct.low_balance_alert=acctlowbal_post
+                acct.notes=POSTvars.notes
                 acct.save()
             except Exception as e:
                 flash('Error updating account', category='error')
-                print(e)
         if acctedit=='true' and accountid==None:
             try:
                 newacct=Acct(
@@ -65,7 +67,8 @@ def accts():
                     bank_account_number=acctnumber_post,
                     bank_routing_number=acctrouting_post,
                     low_balance_alert=acctlowbal_post,
-                    current_balance=acctstartbalance_post
+                    current_balance=acctstartbalance_post,
+                    notes=POSTvars.notes
                 )
                 newacct.save()
                 newPtxLog=PtxLog()
@@ -77,19 +80,7 @@ def accts():
                 user.save()
             except Exception as e:
                 flash('Error creating account', category='error')
-                print(e)
 
-
-    try:
-        print(
-                "_id: ", acct.id,
-                "Display Name: ", acct.account_display_name,
-                "Institution: ", acct.bank_name,
-                "Account Number: ", acct.bank_account_number,
-                "Routing Number: ", acct.bank_routing_number,
-                "Low Balance: ", acct.low_balance_alert
-            )
-    except: pass
 
     if acct==[]:
         currUser=User.objects.get(id=current_user.id)
@@ -270,13 +261,14 @@ def newtx():
             return render_template("accts.html", acct=acct, user=user, ptx=ptx)
     except Exception as e:
         flash("Unable to write transaction to database. Please try again.", category="danger")
-        print(e)
 
     return render_template("newtx.html", acct=acct, user=user, ptx=ptx, txtype=txtype, typeid=typeid, typeid_options=typeid_options, txTypeData=txTypeData)
 
 @views.route('/expense', methods=['GET','POST'])
 @login_required
 def expense():
+    declareVars=['notes']
+    POSTvars=postForm(declareVars)
     accountid = request.args.get('acct')
     expid_arg = request.args.get('expid_arg')
     expid_post = request.form.get('expid_post')
@@ -355,7 +347,6 @@ def expense():
     try:
         if (dispname!=None and amount!=None and frequency!=None and start_date!=None):
             if (expid!=""):
-                print("expid: ",type(expid),"dispname: ",dispname,"amount: ",amount,"frequency: ",frequency,"start_date: ",start_date,"end_date: ",end_date)
                 try:
                     exp=Exp.objects.get(id=expid)
                     exp.display_name=dispname
@@ -363,15 +354,15 @@ def expense():
                     exp.frequency=frequency
                     exp.start_date=start_date
                     if end_date!=None: exp.end_date=end_date
+                    exp.notes=POSTvars.notes
                     exp.save()
                 except:
                     flash("Unable to update existing exp object.", category="error")
             if (expid==""):
-                exp=Exp(display_name=dispname, amount=amount, frequency=frequency, start_date=start_date)
+                exp=Exp(display_name=dispname, amount=amount, frequency=frequency, start_date=start_date, notes=POSTvars.notes)
                 exp.save()
                 acct.exp_ids.append(exp.id)
                 acct.save()
-                print("exp.id: ",exp.id,"exp.display_name: ",exp.display_name,"exp.amount: ",exp.amount,"exp.frequency: ",exp.frequency,"exp.start_date: ",exp.start_date,"exp.end_date: ",exp.end_date)
     except:
         flash("Ensure all fields are filled in before submitting.", category="warning")
 
@@ -385,6 +376,8 @@ def expense():
 @views.route('/revenue', methods=['GET','POST'])
 @login_required
 def revenue():
+    declareVars=['notes']
+    POSTvars=postForm(declareVars)
     accountid = request.args.get('acct')
     revid_arg = request.args.get('revid_arg')
     revid_post = request.form.get('revid_post')
@@ -470,6 +463,7 @@ def revenue():
                     rev.frequency=frequency
                     rev.start_date=start_date
                     if end_date!=None: rev.end_date=end_date
+                    rev.notes=POSTvars.notes
                     rev.save()
                 except:
                     flash("Unable to update existing rev object.", category="error")
@@ -478,7 +472,8 @@ def revenue():
                     rev=Rev(display_name=dispname, 
                     amount=amount, 
                     frequency=frequency, 
-                    start_date=start_date)
+                    start_date=start_date,
+                    notes=POSTvars.notes)
                     rev.save()
                     acct.rev_ids.append(rev.id)
                     acct.save()

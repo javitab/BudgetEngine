@@ -20,7 +20,4 @@ def acctProjDict(acct_id:str):
             "disp_name": iProj.disp_name
             }
         output.append(dict)
-    for i in output:
-        print("Id: ",i['id'])
-        print("name: ",i['disp_name'])
     return output

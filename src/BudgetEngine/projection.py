@@ -42,7 +42,7 @@ class ProjectionExpTx(DynamicEmbeddedDocument):
 class Projection(Document):
     projection_acct=ReferenceField(Acct)
     disp_name=StringField(max_length=100)
-    start_date=DateField(required=True,default=dt.utcnow)
+    start_date=DateField(required=True,default=dt.now)
     end_date=DateField(required=True)
     projected_txs=EmbeddedDocumentListField(PTx)
     balance=DecimalField()
@@ -60,9 +60,7 @@ class Projection(Document):
 
         for rev in self.projection_acct.rev_ids:
             iterDate=rev.next_date()
-            print("iterDate type: ",type(iterDate),iterDate)
-            print("end_date type: ",type(self.end_date),self.end_date)
-            while iterDate.date<=self.end_date:
+            while iterDate<=self.end_date:
                 if iterDate not in rev.exclusion_dates:
                     iterDateTime=dt.combine(iterDate, dt.min.time())
                     self.rev_txs.create(

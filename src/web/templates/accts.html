@@ -55,10 +55,17 @@
     <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="/#" role="button" aria-expanded="false">Projections</a>
     <ul class="dropdown-menu">
         {% for i in projs %}
-        <li><a class="dropdown-item" href="projection/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
+        <li><a class="dropdown-item" href="/projection/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="projection/new?acct_id={{acct.id}}">Create New Projection</a></li>
+        <li>
+          <form method="post" action="/projection/new" class="inline">
+            <input type="hidden" name="acct_id" value="{{acct.id}}">
+            <div class="text-center">
+              <button type="submit" class="btn btn-success">Create New Projection</button>
+            </div>
+          </form>
+        </li>
       </ul>
   </li> </li>
 
@@ -91,6 +98,11 @@
     {% else %}
     <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-" readonly>
     {% endif %}
+  </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Notes</span>
+      <textarea class="form-control" id="notes" name="notes" rows="3">{{acct.notes}}</textarea>
+    </div>
   <div class="input-group mb-3">
     <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
   </div>

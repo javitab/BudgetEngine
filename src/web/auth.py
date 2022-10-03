@@ -3,7 +3,6 @@ from flask import Blueprint,render_template, request, flash,redirect,url_for
 from flask_login import login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..BudgetEngine.user import User
-from ..BudgetEngine.data import *
 
 auth = Blueprint('auth', __name__)
 
@@ -61,6 +60,5 @@ def sign_up():
             password=generate_password_hash(password1),
             timezone=timezone)
             newuser.save()
-        print(generate_password_hash(password1))
 
     return render_template("signup.html")

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
-from ..BudgetEngine import User
+from ..BudgetEngine.user import User
 
 def create_app():
     app = Flask(__name__)

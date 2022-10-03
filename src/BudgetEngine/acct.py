@@ -16,7 +16,7 @@ class Tx(EmbeddedDocument):
     categories=ListField((StringField(max_length=50)))
 
 class PtxLog(Document):
-    date_created=DateTimeField(required=True,default=dt.utcnow())
+    date_created=DateTimeField(required=True,default=dt.now())
     posted_txs=EmbeddedDocumentListField(Tx)
 
 class Acct(Document):
@@ -35,6 +35,7 @@ class Acct(Document):
     active_ptx_log_id=ReferenceField(PtxLog)
     history_ptx_log_ids=ListField((ReferenceField(PtxLog)))
     projections=ListField(ObjectIdField())
+    notes=StringField()
 
     meta = {
         'indexes': ['rev_ids','exp_ids','active_ptx_log_id','history_ptx_log_ids']

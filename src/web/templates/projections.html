@@ -58,7 +58,13 @@
         <li><a class="dropdown-item" href="/projection/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="/projection/new?acct_id={{acct.id}}">Create New Projection</a></li>
+        <li>
+          <form method="post" action="/projection/new" class="inline">
+            <input type="hidden" name="acct_id" value="{{acct.id}}">
+            <div class="text-center">
+            <button type="submit" class="btn btn-success">Create New Projection</button></div>
+          </form>
+        </li>
       </ul>
   </li> </li>
 
@@ -67,7 +73,7 @@
 
   {% if action=='view' %}
 <form method="POST" id="acctForm">
-  <label for="acctForm">Create New Projection</label>
+  <label for="acctForm">Viewing Projection</label>
   <div class="input-group mb-3">
     <span class="input-group-text">_id</span>
     <input type="text" class="form-control" name="proj_id" value="{{proj.id}}" placeholder="-" readonly>
@@ -94,7 +100,7 @@
       <span class="input-group-text">_id</span>
       <input type="text" class="form-control" name="proj_id" value="{{proj.id}}" placeholder="-" readonly>
       <span class="input-group-text">Name</span>
-      <input type="text" class="form-control" name="proj_disp_name" value="{{proj.disp_name}}" placeholder="-">
+      <input type="text" class="form-control" name="proj_disp_name" value="" placeholder="-">
     </div>
     <div class="input-group mb-3">
       <span class="input-group-text">Account Name</span>
@@ -107,7 +113,7 @@
       <span class="input-group-text">End Date</span>
       <input type="text" class="form-control" name="end_date" value="{{proj.end_date}}" placeholder="-">
       <span class="input-group-text">Final Balance</span>
-      <input type="text" class="form-control" name="balance" value="{{proj.balance}}" placeholder="-">
+      <input type="text" class="form-control" name="balance" value="" placeholder="-">
     </div>
     <div class="input-group mb-3">
         <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
