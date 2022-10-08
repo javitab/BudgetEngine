@@ -92,7 +92,7 @@ class Tx(EmbeddedDocument):
             'read_only': "No",
             'hidden': False,
             'field_friendly': 'Categories',
-        }
+        }]
 
 class PtxLog(Document):
     date_created=DateTimeField(required=True,default=dt.now())
