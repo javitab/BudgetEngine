@@ -11,13 +11,13 @@
           <a class="nav-link active" aria-current="page" href="#">{{acct.account_display_name}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=adhoc">New AdHoc Tx</a>
+          <a class="nav-link" aria-current="page" href="/tx/new?acct={{acct.id}}&user={{user.id}}&txtype_arg=adhoc">New AdHoc Tx</a>
         </li>
         <li class="nav-item">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Rev Tx</a>
             <ul class="dropdown-menu">
                 {% for i in acct.rev_ids %}
-                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=rev&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
+                <li><a class="dropdown-item" href="/tx/new?acct={{acct.id}}&user={{user.id}}&txtype_arg=rev&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
                 {%endfor%}
               </ul>
           </li>
@@ -25,7 +25,7 @@
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Exp Tx</a>
             <ul class="dropdown-menu">
                 {% for i in acct.exp_ids %}
-                <li><a class="dropdown-item" href="/newtx?acct={{acct.id}}&user={{user.id}}&txtype_arg=exp&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
+                <li><a class="dropdown-item" href="/tx/new?acct={{acct.id}}&user={{user.id}}&txtype_arg=exp&typeid_arg={{i.id}}">{{i.display_name}}</a></li>
                 {%endfor%}
               </ul>
           </li>

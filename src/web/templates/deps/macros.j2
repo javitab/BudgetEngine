@@ -1,0 +1,116 @@
+{% macro render_table(tableData) %}
+{% set header = tableData.header %}
+{% set rows = tableData.rows %}
+    <div class="container-fluid">
+        <table class="table table-success table-striped-columns table-hover">
+            <thead>
+                <tr>
+                    {% for item in header %}
+                        <th>{{ item }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+
+                    
+                {% for row in rows %}
+                        <tr>
+                        {% for item in row %}
+                            <td>{{item}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                
+            </tbody>
+    </div>
+{% endmacro %}
+
+{% macro render_context_form(contextFormData) %}
+    <div class="container">
+        <label for="{{contextFormData.FormName}}"><h5>{{contextFormData.DisplayName}}</h5></label>
+    </div>
+    <div class="container">
+        <form method="POST" id="{{contextFormData.FormName}}" action="{{contextFormData.FormAction}}"
+        <div class="input-group mb-3">
+            <input type="hidden" class="form-control" id="form_submitted" name="form_submitted" value="{{rec_mode}}" readonly>
+            <input type="hidden" class="form-control" id="acct_id" name="acct_id" value="{{acct.id}}" readonly>
+            <div class="btn-group" role="group" aria-label="record_submission">
+                {% if rec_mode!='view' %}
+                    {% if context=="acct" %}
+                        <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-secondary">Cancel</a>
+                    {% elif context=="revs"%}
+                        <a href="/revs/view?acct_id={{acct.id}}&rev_id={{rev.id}}" class="btn btn-outline-secondary">Cancel</a>
+                    {% elif context=="exps" %}
+                        <a href="/exps/view?acct_id={{acct.id}}&exp_id={{exp.id}}" class="btn btn-outline-secondary">Cancel</a>
+                    {% elif rec_mode=='new' %}
+                    <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-secondary">Cancel</a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-success">Submit</button>
+                {% else %}
+                    <a href="edit?acct_id={{acct.id}}{% if context!="acct" %}{% if context=='exps' %}&exp_id={{exp.id}}{% elif context=='revs' %}&rev_id={{rev.id}}
+{% elif context=='projs' %}&proj_id={{proj.id}}{% endif %}{% endif %}" class="btn btn-outline-secondary">Edit</a>
+                {% endif %}
+            </div>
+            </div>
+            {% for group in contextFormData.formData %}
+                <div class="input-group mb-3">
+                    {% for field in group %}
+                        
+                        <span class="input-group-text" id="{{field['field_name']}}">{{field['field_friendly']}}</span>
+
+                        {% if field['field_type']=='longtext' %}
+                            <textarea 
+                                class="form-control" 
+                                id="{{field['field_name']}}"
+                                placeholder="{{field['field_placeholder']}}" 
+                                name="{{field['field_name']}}" 
+                                {% if (field['read_only']=='Always') or (rec_mode=='view') or (field['read_only']=='New' and rec_mode=='new')%}readonly{% endif %} 
+                                rows="4">{{field['value']}}</textarea>
+                        {% elif field['field_type']=='dropdown' %}
+                            {% if (field['read_only']=='Always') or (rec_mode=='view') %}
+                                <input type="text" 
+                                    class="form-control" 
+                                    id="{{field['field_name']}}" 
+                                    name="{{field['field_name']}}"
+                                    placeholder="{{field['field_placeholder']}}" 
+                                    value="{{field['value']}}" 
+                                    readonly>
+                            {% else %}
+                                <select 
+                                    class="form-select" 
+                                    id="{{field['field_name']}}" 
+                                    name="{{field['field_name']}}">
+                                {% if field['value']=="" %}
+                                    <option selected>Select...</option>
+                                {% else %}
+                                    <option 
+                                        value="{{field['value']}}">
+                                        {{field['value']}}
+                                    </option>
+                                {% endif %}
+                                {% for choice in field['field_choices'] %}
+                                    <option 
+                                        value="{{choice}}">
+                                        {{choice}}
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                            {% else %}
+                                <input type="text" 
+                                    class="form-control" 
+                                    id="{{field['field_name']}}" 
+                                    name="{{field['field_name']}}" 
+                                    placeholder="{{field['field_placeholder']}}" 
+                                    value="{{field['value']}}" 
+                                    {% if (field['read_only']=='Always') or (rec_mode=='view') or (field['read_only']=='New' and rec_mode!='new') %}
+                                        readonly
+                                    {% endif %}>
+
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <br>
+            </div>
+{% endmacro %}
+

@@ -75,9 +75,12 @@ if __name__=='__main__':
             newAcct.history_ptx_log_ids.append(newPtxLog.id)
             newAcct.active_ptx_log_id = newPtxLog.id
             newAcct.save()
+            """
+            Create test revenue for newAcct
+            """
             newRev = Rev(
                 display_name=fake.random_element(elements=['Day Job','Uber','Lyft','Instacart']),
-                amount=fake.pydecimal(positive=True, min_value=1, max_value=100000, left_digits=6, right_digits=2),
+                amount=fake.pydecimal(positive=True, min_value=500, max_value=1000, left_digits=6, right_digits=2),
                 frequency="weekly",
                 start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None),
                 notes=fake.text(max_nb_chars=200)
@@ -86,13 +89,15 @@ if __name__=='__main__':
             newRev.save()
             newAcct.rev_ids.append(newRev.id)
             newAcct.save()
-            
+            """
+            Create test expenses for newAcct
+            """
             for _ in range(testExpenses):
                 newExp = Exp(
                     display_name=fake.random_element(elements=['Rent','Netflix','Spotify','Cellphone','Electric','Gas','Water','Mortgage','Car Loan']),
                     amount=fake.pydecimal(positive=True, min_value=1, max_value=100, left_digits=3, right_digits=2),
                     frequency="monthly",
-                    start_date=fake.date_time_between(start_date="-30d",end_date="now",tzinfo=None),
+                    start_date=fake.date_time_between(start_date="+5d",end_date="now",tzinfo=None),
                     notes=fake.text(max_nb_chars=200)
                 )
                 newExp.save()
@@ -130,6 +135,7 @@ if __name__=='__main__':
                         rev.save()
                 for exp in newAcct.exp_ids:
                     exp=Exp.objects.get(id=exp)
+                    print("_date: ",_date,"exp.next_date(): ",exp.next_date())
                     if exp.next_date()==_date:
                         newPtxLog.posted_txs.create(
                             txID=ObjectId(),

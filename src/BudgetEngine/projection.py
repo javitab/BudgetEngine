@@ -48,6 +48,7 @@ class Projection(Document):
     balance=DecimalField()
     rev_txs=EmbeddedDocumentListField(ProjectionRevTx)
     exp_txs=EmbeddedDocumentListField(ProjectionExpTx)
+    notes=StringField()
     meta={
         'index': ['projection_acct']
     }
@@ -140,3 +141,47 @@ class Projection(Document):
             iterDate=iterDate+timedelta(days=1)
         self.save()
 
+    TableHeaders=['txID','date','memo','amount','tx_type','ad_hoc','balance']
+
+    FormInputGroups=[
+    {
+        'input_group_name': 'Projection Info',
+        'field_name': 'id',
+        'read_only': 'Always',
+        'hidden': False,
+        'field_friendly': '_id',
+        'field_placeholder': '-',
+        'field_help': 'internal record id name for account',
+        'field_type': 'ObjectId'
+    },
+    {
+        'input_group_name': 'Projection Info',
+        'field_name': 'disp_name',
+        'read_only': "No",
+        'hidden': False,
+        'field_friendly': 'Display Name',
+        'field_placeholder': 'Enter display name for projection (required)',
+        'field_help': 'Enter name to display for projection',
+        'field_type': 'text'
+    },
+    {
+        'input_group_name': 'Projection Inputs',
+        'field_name': 'start_date',
+        'read_only': "New",
+        'hidden': False,
+        'field_friendly': 'Start Date',
+        'field_placeholder': 'Enter start date for projection (required)',
+        'field_help': 'Enter start date for projection',
+        'field_type': 'date'
+    },
+    {
+        'input_group_name': 'Projection Inputs',
+        'field_name': 'end_date',
+        'read_only': "New",
+        'hidden': False,
+        'field_friendly': 'End Date',
+        'field_placeholder': 'Enter end date for projection (required)',
+        'field_help': 'Enter end date for projection',
+        'field_type': 'date'
+    }
+]

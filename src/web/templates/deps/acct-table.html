@@ -1,0 +1,34 @@
+<div class="container">
+    <table class="table table-success table-striped-columns table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">_id</th>
+                <th scope="col">Memo</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+                <th scope="col">TxType</th>
+                <th scope="col">AdHoc</th>
+                <th scope="col">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in ptx %}
+            <tr>
+                <td>{{"#"}}</td>
+                <td>{{i.txID}}</td>
+                <td>{{i.memo}}</td>
+                {%if i.tx_type=="debit"%}
+                <td>{{"-$%.2f"|format(i.amount)}}</td>
+                {%else%}
+                <td>{{"$%.2f"|format(i.amount)}}</td>
+                {%endif%}
+                <td>{{i.date}}</td>
+                <td>{{i.tx_type}}</td>
+                <td>{{i.ad_hoc}}</td>
+                <td>{{i.balance}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

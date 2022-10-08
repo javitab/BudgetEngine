@@ -1,0 +1,36 @@
+<div class="container">
+  <form method="POST" id="acctForm" action="{{action}}">
+    <label for="acctForm">Modify Account record</label>
+    <div class="input-group mb-3">
+      <span class="input-group-text">_id</span>
+      <input type="text" class="form-control" name="acct_id" value="{{acct.id}}" placeholder="-" readonly>
+      <span class="input-group-text">Name</span>
+      <input type="text" class="form-control" name="acctname_post" value="{{acct.account_display_name}}" placeholder="-" {% if rec_mode=="view" %}readonly{% endif %}>
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Institution</span>
+      <input type="text" class="form-control" name="acctinst_post" value="{{acct.bank_name}}" placeholder="-" {% if rec_mode=="view" %}readonly{% endif %}>
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">account</span>
+      <input type="text" class="form-control" name="acctnumber_post" value="{{acct.bank_account_number}}" placeholder="-" {% if rec_mode=="view" %}readonly{% endif %}>
+      <span class="input-group-text">routing</span>
+      <input type="text" class="form-control" name="acctrouting_post" value="{{acct.bank_routing_number}}" placeholder="-" {% if rec_mode=="view" %}readonly{% endif %}>
+      <span class="input-group-text">Low Balance</span>
+      <input type="text" class="form-control" name="acctlowbal_post" value="{{acct.low_balance_alert}}" placeholder="-" {% if rec_mode=="view" %}readonly{% endif %}>
+      <span class="input-group-text">Balance</span>
+      {% if acct==[] %}
+      <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-">
+      {% else %}
+      <input type="text" class="form-control" name="acctstartbalance_post" value="{{acct.current_balance}}" placeholder="-" readonly>
+      {% endif %}
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Notes</span>
+      <textarea class="form-control" id="notes" name="notes" rows="3">{{acct.notes}}</textarea>
+    </div>
+    <div class="input-group mb-3">
+      <button type="submit" class="btn btn-primary" placeholder="-">Submit</button>
+    </div>
+  </form>
+</div>

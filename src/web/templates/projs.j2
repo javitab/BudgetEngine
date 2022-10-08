@@ -1,0 +1,23 @@
+{% from '/deps/macros.j2' import render_table with context %}
+{% from '/deps/macros.j2' import render_context_form with context %}
+{% extends "/deps/base.j2" %}
+
+{% set showHeaderNav = 1 %}
+
+{% block title %}Projection View{% endblock %}
+
+
+{% block content %}
+
+{% include "/deps/pre-content-nav-block.html" %}
+
+{% block ContextForm %}
+    {{ render_context_form(ContextForm)}}
+{% endblock %}
+
+{% if rec_mode!='new' %}
+    {{ render_table(ptx) }}    
+{% endif %}
+
+
+{% endblock %}

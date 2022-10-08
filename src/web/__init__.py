@@ -8,12 +8,22 @@ def create_app():
     from .views import views
     from .auth import auth
     from .admin import admin
-    from .projections import project
+    from .proj import proj
+    from .tx import tx
+    from .acct import acct
+    from .exps import exps
+    from .revs import revs
+    from .projs import projs
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(admin, url_prefix='/admin')
-    app.register_blueprint(project, url_prefix='/projection')
+    app.register_blueprint(proj, url_prefix='/projection')
+    app.register_blueprint(tx, url_prefix='/tx')
+    app.register_blueprint(acct, url_prefix='/accts')
+    app.register_blueprint(exps, url_prefix='/exps')
+    app.register_blueprint(revs, url_prefix='/revs')
+    app.register_blueprint(projs, url_prefix='/projs')
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

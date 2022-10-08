@@ -1,5 +1,7 @@
-{% extends "base.html" %}
+{% extends "/deps/base.j2" %}
 {% block title %}Login{% endblock %}
+
+{% set showHeaderNav = 1 %}
 
 {% block content %}
 
@@ -22,5 +24,6 @@
     <br />
     <button type="submit" class="btn btn-primary">Login</button>
     </h3>
+
 </form>
 {% endblock %}

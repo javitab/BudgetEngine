@@ -1,5 +1,8 @@
-{% extends "base.html" %}
+{% extends "/deps/base.j2" %}
 {% block title %}Profile{% endblock %}
+
+{% set showHeaderNav = 1 %}
+
 {% block content %}
 <h1 class="title">
   Welcome, {{current_user.first_name}}!

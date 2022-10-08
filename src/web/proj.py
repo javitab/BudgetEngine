@@ -12,14 +12,14 @@ from ..BudgetEngine.dtfunc import *
 
 from .webfunc import *
 
-project = Blueprint('project', __name__)
+proj = Blueprint('proj', __name__)
 
 
-@project.route('/view', methods=['GET'])
+@proj.route('/view', methods=['GET'])
 @login_required
 def view_proj():
     declareVars=['acct_id','proj_id','start_date','end_date']
-    GETargs=getArgs(declareVars)
+    GETargs=getVars(declareVars,'get')
     
     if request.method=='GET':
         if GETargs.proj_id==None:
@@ -33,14 +33,12 @@ def view_proj():
     if request.method=='POST':
         pass
 
-@project.route('/new', methods=['POST','GET'])
+@proj.route('/new', methods=['POST','GET'])
 @login_required
 def new_proj():
     declareVars=['acct_id','start_date','end_date','proj_disp_name','proj_id']
-    POSTvars=postForm(declareVars)
-    setattr(POSTvars,'start_date',makeDate(POSTvars.start_date))
-    setattr(POSTvars,'end_date',makeDate(POSTvars.end_date))
-    GETargs=getArgs(declareVars)
+    POSTvars=getVars(declareVars,'post')
+    GETargs=getVars(declareVars,'get')
 
 
     if POSTvars.proj_id==None:

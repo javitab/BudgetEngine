@@ -1,0 +1,63 @@
+<br>
+
+<h3>Viewing transactions in {{acct.account_display_name}}</h3>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    {% if acct==[] %}
+    <a class="nav-link active" aria-current="page" href="#">No Account Selected</a>
+    {% else %}
+    {% endif %}
+    <a class="nav-link active" aria-current="page" href="/accts/view?acct_id={{acct.id}}">{{acct.account_display_name}}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/tx/new?acct_id={{acct.id}}&txtype=adhoc" role="button">New Tx</a>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Accounts</a>
+    <ul class="dropdown-menu">
+      {% for i in user.acctIds %}
+      <li><a class="dropdown-item" href="/accts/view?acct_id={{i.id}}">{{i.account_display_name}}</a></li>
+      {%endfor%}
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="/accts/new">Create New Account</a></li>
+      {% if context=="acct" %}
+      <li><a class="dropdown-item" href="/accts/edit?acct_id={{acct.id}}">Edit This Account</a></li>
+      {% endif %}
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Revenues</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.rev_ids %}
+        <li><a class="dropdown-item" href="/revs/view?acct_id={{acct.id}}&rev_id={{i.id}}">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/revs/new?acct_id={{acct.id}}">Create New Revenue</a></li>
+        {% if context=='revs' and rec_mode!='new' %}
+          <li><a class="dropdown-item" href="/revs/edit?acct_id={{acct.id}}&rev_id={{rev.id}}">Edit This Revenue</a></li>
+        {% endif %}
+      </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Expenses</a>
+    <ul class="dropdown-menu">
+        {% for i in acct.exp_ids %}
+        <li><a class="dropdown-item" href="/exps/view?acct_id={{acct.id}}&exp_id={{i.id}}">{{i.display_name}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/exps/new?acct_id={{acct.id}}">Create New Expense</a></li>
+        {% if context=='exps' and rec_mode!='new' %}
+          <li><a class="dropdown-item" href="/exps/edit?acct_id={{acct.id}}&exp_id={{exp.id}}">Edit This Expense</a></li>
+        {% endif %}
+      </ul>
+  </li>
+  </li><li class="nav-item">
+    <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="/#" role="button" aria-expanded="false">Projections</a>
+    <ul class="dropdown-menu">
+        {% for i in projs %}
+        <li><a class="dropdown-item" href="/projs/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
+        {%endfor%}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/projs/new?acct_id={{acct.id}}">Create New Projection</a></li>
+      </ul>
+  </li> </li>

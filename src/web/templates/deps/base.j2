@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    {% include '/deps/header.html' %}
+  <body>
+      {% if showHeaderNav==1 %}
+        {% include '/deps/header-nav.html' %}
+      {% endif %}
+      {% include '/deps/flash-messages.html' %}
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+      {% include '/deps/scripts.html' %}
+  </body>
+</html>
