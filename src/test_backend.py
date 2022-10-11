@@ -176,7 +176,7 @@ if __name__=='__main__':
             projAcct=Acct.objects.get(id=acct)
             newProjection=Projection(
                 disp_name=f"Projection through {dt.now().__add__(timedelta(days=90)).date()}",
-                projection_acct=str(projAcct.id),
+                projection_acct=projAcct.id,
                 start_date=dt.now(),
                 end_date=dt.now().__add__(timedelta(days=90))
             )

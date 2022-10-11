@@ -40,7 +40,7 @@ class ProjectionExpTx(DynamicEmbeddedDocument):
     }
 
 class Projection(Document):
-    projection_acct=StringField(required=True)
+    projection_acct=ObjectIdField(required=True)
     disp_name=StringField(max_length=100)
     start_date=DateField(required=True,default=dt.now)
     end_date=DateField(required=True)
