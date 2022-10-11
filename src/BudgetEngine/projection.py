@@ -3,7 +3,7 @@ from datetime import timedelta
 from mongoengine import *
 
 
-from .acct import *
+
 from .exp import *
 from .rev import *
 from .dtfunc import *
@@ -40,7 +40,7 @@ class ProjectionExpTx(DynamicEmbeddedDocument):
     }
 
 class Projection(Document):
-    projection_acct=ReferenceField(Acct)
+    projection_acct=StringField(required=True)
     disp_name=StringField(max_length=100)
     start_date=DateField(required=True,default=dt.now)
     end_date=DateField(required=True)
@@ -53,13 +53,15 @@ class Projection(Document):
         'index': ['projection_acct']
     }
 
-    def iterateRevs(self):
+
+
+    def iterateRevs(self,Acct):
         """
         Iterate through all revenue objects and create a list of projected revenue transactions
         """
         #Create list of revenues for each day
 
-        for rev in self.projection_acct.rev_ids:
+        for rev in Acct.rev_ids:
             iterDate=rev.next_date()
             while iterDate<=self.end_date:
                 if iterDate not in rev.exclusion_dates:
@@ -73,12 +75,12 @@ class Projection(Document):
                     self.rev_txs.save()
                 iterDate=txIterate(rev.frequency,iterDate)
 
-    def iterateExps(self):
+    def iterateExps(self,Acct):
         """
         Iterate through all expense objects and create a list of projected expense transactions
         """        
         #Create list of revenues for each day
-        for exp in self.projection_acct.exp_ids:
+        for exp in Acct.exp_ids:
             iterDate=exp.next_date()
             while iterDate<=self.end_date:
                 if iterDate not in exp.exclusion_dates:
@@ -92,13 +94,13 @@ class Projection(Document):
                     self.exp_txs.save()
                 iterDate=txIterate(exp.frequency,iterDate)
 
-    def runProjection(self):
+    def runProjection(self,Acct):
         """
         Iterate through all expense and revenue objects and create a list of projected transactions
         """
-        self.iterateRevs()
-        self.iterateExps()
-        self.balance=self.projection_acct.current_balance
+        self.iterateRevs(Acct)
+        self.iterateExps(Acct)
+        self.balance=Acct.current_balance
         iterDate=self.start_date
         seq=0
         while iterDate<=self.end_date:

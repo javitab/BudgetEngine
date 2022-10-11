@@ -3,6 +3,7 @@ from datetime import datetime as dt
 
 from .rev import Rev
 from .exp import Exp
+from .projection import Projection
 
 
 class Tx(EmbeddedDocument):

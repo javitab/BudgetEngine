@@ -176,12 +176,12 @@ if __name__=='__main__':
             projAcct=Acct.objects.get(id=acct)
             newProjection=Projection(
                 disp_name=f"Projection through {dt.now().__add__(timedelta(days=90)).date()}",
-                projection_acct=projAcct.id,
+                projection_acct=str(projAcct.id),
                 start_date=dt.now(),
                 end_date=dt.now().__add__(timedelta(days=90))
             )
             newProjection.save()
-            newProjection.runProjection()
+            newProjection.runProjection(projAcct)
             projAcct.projections.append(newProjection.id)
             projAcct.save()
             print("\n### Printing Projection for Acct: ",projAcct.account_display_name,"###")
