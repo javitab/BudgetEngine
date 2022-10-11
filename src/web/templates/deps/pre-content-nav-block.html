@@ -54,10 +54,10 @@
   </li><li class="nav-item">
     <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="/#" role="button" aria-expanded="false">Projections</a>
     <ul class="dropdown-menu">
-        {% for i in projs %}
-        <li><a class="dropdown-item" href="/projs/view?proj_id={{i['id']}}">{{i['disp_name']}}</a></li>
+        {% for i in acct.projs %}
+        <li><a class="dropdown-item" href="/projs/view?proj_id={{i.id}}">{{i.display_name}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="/projs/new?acct_id={{acct.id}}">Create New Projection</a></li>
+        <li><a class="dropdown-item" href="/projs/new?proj_id={{i.id}}">Create New Projection</a></li>
       </ul>
   </li> </li>

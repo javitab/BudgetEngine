@@ -29,7 +29,7 @@
     <div class="container">
         <label for="{{contextFormData.FormName}}"><h5>{{contextFormData.DisplayName}}</h5></label>
     </div>
-    <div class="container">
+    <div class="container-sm">
         <form method="POST" id="{{contextFormData.FormName}}" action="{{contextFormData.FormAction}}"
         <div class="input-group mb-3">
             <input type="hidden" class="form-control" id="form_submitted" name="form_submitted" value="{{rec_mode}}" readonly>
@@ -37,18 +37,17 @@
             <div class="btn-group" role="group" aria-label="record_submission">
                 {% if rec_mode!='view' %}
                     {% if context=="acct" %}
-                        <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-danger">Cancel</a>
                     {% elif context=="revs"%}
-                        <a href="/revs/view?acct_id={{acct.id}}&rev_id={{rev.id}}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="/revs/view?acct_id={{acct.id}}&rev_id={{rev.id}}" class="btn btn-outline-danger">Cancel</a>
                     {% elif context=="exps" %}
-                        <a href="/exps/view?acct_id={{acct.id}}&exp_id={{exp.id}}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="/exps/view?acct_id={{acct.id}}&exp_id={{exp.id}}" class="btn btn-outline-danger">Cancel</a>
                     {% elif rec_mode=='new' %}
-                    <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-danger">Cancel</a>
                     {% endif %}
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success">Save</button>
                 {% else %}
-                    <a href="edit?acct_id={{acct.id}}{% if context!="acct" %}{% if context=='exps' %}&exp_id={{exp.id}}{% elif context=='revs' %}&rev_id={{rev.id}}
-{% elif context=='projs' %}&proj_id={{proj.id}}{% endif %}{% endif %}" class="btn btn-outline-secondary">Edit</a>
+                    <a href="edit?acct_id={{acct.id}}{% if context!="acct" %}{% if context=='exps' %}&exp_id={{exp.id}}{% elif context=='revs' %}&rev_id={{rev.id}}{% elif context=='projs' %}&proj_id={{proj.id}}{% endif %}{% endif %}" class="btn btn-outline-secondary">Edit</a>
                 {% endif %}
             </div>
             </div>
@@ -101,7 +100,7 @@
                                     id="{{field['field_name']}}" 
                                     name="{{field['field_name']}}" 
                                     placeholder="{{field['field_placeholder']}}" 
-                                    value="{{field['value']}}" 
+                                    value="{% if field['value']=='None' %}{% endif %}{{field['value']}}" 
                                     {% if (field['read_only']=='Always') or (rec_mode=='view') or (field['read_only']=='New' and rec_mode!='new') %}
                                         readonly
                                     {% endif %}>
@@ -111,6 +110,8 @@
                 </div>
             {% endfor %}
             <br>
+            </div>
+            </div>
             </div>
 {% endmacro %}
 

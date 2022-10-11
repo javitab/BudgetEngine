@@ -68,18 +68,22 @@ def new():
     #Collecting get and post values
     rec_mode='new'
     declareVars=['acct_id']
-    for i in contextFormData.contextFormFieldNames(Acct): declareVars.append(i)
+    for i in contextFormData.contextFormFieldNames(Projection): declareVars.append(i)
     vars=getVars(declareVars)
     webPOST=vars['post']
     webGET=vars['get']
+    if webGET['acct_id']!=None:
+        acct=Acct.objects.get(id=str(webGET['acct_id']))
+    else:
+        acct=Acct.objects.get(id=webPOST['acct_id'])
     acctContextForm=contextFormData(
-            Object=Acct(),
+            Object=Projection(),
             rec_mode=rec_mode,
-            FormName="acctContextForm",
-            DisplayName="New Account",
-            FormAction="/accts/submit"
+            FormName="projContextForm",
+            DisplayName="New Projection",
+            FormAction="/projs/submit"
             )
-    return render_template("accts.j2",context=context,ContextForm=acctContextForm,user=current_user,rec_mode=rec_mode)
+    return render_template("accts.j2",acct=acct,context=context,ContextForm=acctContextForm,user=current_user,rec_mode=rec_mode)
     
 @projs.route('submit', methods=['POST'])
 def submit():
