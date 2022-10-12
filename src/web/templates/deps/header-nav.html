@@ -12,6 +12,10 @@
       </button>
       <div class="collapse navbar-collapse" id="navbar">
           <div class="navbar-nav">
+            {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link" id="profile" href="/profile">{{current_user.first_name}}</a>
+                <a class="nav-item nav-link disabled" id="#" href="#">|</a>
+            {% endif %}
               <a class="nav-item nav-link" id="home" href="/">Home</a>
               
               {% if current_user.is_authenticated %}
