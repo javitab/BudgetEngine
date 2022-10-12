@@ -10,4 +10,12 @@
   Your message is {{message}}
   {% endif %}
 </h1>
+<br>
+<br>
+{% if current_user.acctIds==[] %}
+  <h4 class="subtitle">
+    It looks like you haven't created a <a href="accts/new">new account</a> yet. Click the link to get started!
+  </h4>
+{% endif %}
+
 {% endblock %}

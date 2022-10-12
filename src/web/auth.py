@@ -1,6 +1,6 @@
 from bson import ObjectId
 from flask import Blueprint,render_template, request, flash,redirect,url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user,login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..BudgetEngine.user import User
 
@@ -26,6 +26,7 @@ def login_post():
     return redirect(url_for('views.profile'))
 
 @auth.route('/logout')
+@login_required
 def logout():
     logout_user()
     flash('You have been logged out.', category='success')
@@ -60,5 +61,6 @@ def sign_up():
             password=generate_password_hash(password1),
             timezone=timezone)
             newuser.save()
+        return redirect(url_for('auth.login'))
 
     return render_template("signup.html")

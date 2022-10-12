@@ -26,7 +26,10 @@ def view():
     if webGET['acct_id']!=None:
         acct=Acct.objects.get(id=str(webGET['acct_id']))
     else:
-        acct=current_user.acctIds[0]
+        try:
+            acct=current_user.acctIds[0]
+        except:
+            return redirect(url_for('acct.new'))
     ptx=getAcctTableData(acct)
     acctContextForm=contextFormData(
         Object=acct,
@@ -123,6 +126,7 @@ def newtx():
     return render_template("accts.j2",ptx=getAcctTableData(acct),new_tx_data=new_tx_data,acct=acct,context='newtx',user=current_user,rec_mode=rec_mode)
     
 @acct.route('submit', methods=['POST'])
+@login_required
 def submit():
     #Collecting get and post values
     declareVars=['acct_id','type_id','tx_type','date','memo','amount','form_submitted','adhoc_type']

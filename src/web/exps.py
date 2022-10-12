@@ -90,6 +90,7 @@ def new():
     return render_template("accts.j2",context=context,ptx=getAcctTableData(acct),acct=acct,ContextForm=ContextForm,user=current_user,rec_mode=rec_mode)
     
 @exps.route('submit', methods=['POST'])
+@login_required
 def submit():
     #Collecting get and post values
     declareVars=['acct_id','exp_id']
