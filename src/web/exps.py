@@ -29,19 +29,15 @@ def view():
     if webGET['exp_id']!=None:
         exp=Exp.objects.get(id=str(webGET['exp_id']))
     else:
-        exp=Exp.objects.get(id=str(webPOST['id']))
-    ptx=getAcctTableData(acct)
+        exp=Exp.objects.get(id=str(webPOST['exp_id']))
     ContextForm=contextFormData(
         Object=exp,
-        rec_mode='view',
+        rec_mode=rec_mode,
         FormName="expContextForm",
         DisplayName="View Expense",
         FormAction="/exps/submit"
         )
-    context_vars=contextVars(
-        acct=acct.id,
-        exp=exp.id)
-    return render_template("accts.j2",exp=exp,context=context,ptx=getAcctTableData(acct),acct=acct,ContextForm=ContextForm,user=current_user,rec_mode='view')
+    return render_template("accts.j2",exp=exp,context=context,ptx=getAcctTableData(acct),acct=acct,ContextForm=ContextForm,user=current_user,rec_mode=rec_mode)
 
 @exps.route('/edit', methods=['GET','POST'])
 @login_required
@@ -134,7 +130,7 @@ def submit():
             exp.save()
             acct.exp_ids.append(exp.id)
             acct.save()
-            return redirect(url_for('exps.view',rev_id=str(exp.id),acct_id=str(acct.id)))
+            return redirect(url_for('exps.view',exp_id=str(exp.id),acct_id=str(acct.id)))
         except Exception as e:
             print(e)
     else:

@@ -33,20 +33,31 @@
         <form method="POST" id="{{contextFormData.FormName}}" action="{{contextFormData.FormAction}}"
         <div class="input-group mb-3">
             <input type="hidden" class="form-control" id="form_submitted" name="form_submitted" value="{{rec_mode}}" readonly>
-            <input type="hidden" class="form-control" id="acct_id" name="acct_id" value="{{acct.id}}" readonly>
+            {% if context!='acct' %}
+                <input type="hidden" class="form-control" id="acct_id" name="acct_id" value="{{acct.id}}" readonly>
+            {% endif %}
             <div class="btn-group" role="group" aria-label="record_submission">
                 {% if rec_mode!='view' %}
-                    {% if context=="acct" %}
+                    {% if rec_mode=='edit' %}
+                        {% if context=="acct" %}
+                            <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-danger">Cancel</a>
+                        {% elif context=="revs"%}
+                            <a href="/revs/view?acct_id={{acct.id}}&rev_id={{rev.id}}" class="btn btn-outline-danger">Cancel</a>
+                        {% elif context=="exps" %}
+                            <a href="/exps/view?acct_id={{acct.id}}&exp_id={{exp.id}}" class="btn btn-outline-danger">Cancel</a>
+                        {% elif context=="projs" %}
+                            <a href="/projs/view?acct_id={{acct.id}}&proj_id={{proj.id}}" class="btn btn-outline-danger">Cancel</a>
+                        {% endif %}
+                    {% elif rec_mode=='new' and context!='acct' %}
                         <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-danger">Cancel</a>
-                    {% elif context=="revs"%}
-                        <a href="/revs/view?acct_id={{acct.id}}&rev_id={{rev.id}}" class="btn btn-outline-danger">Cancel</a>
-                    {% elif context=="exps" %}
-                        <a href="/exps/view?acct_id={{acct.id}}&exp_id={{exp.id}}" class="btn btn-outline-danger">Cancel</a>
-                    {% elif rec_mode=='new' %}
-                    <a href="/accts/view?acct_id={{acct.id}}" class="btn btn-outline-danger">Cancel</a>
+                    {% else %}
+                        <a href="/accts/view" class="btn btn-outline-danger">Cancel</a>
                     {% endif %}
+                {% endif %}
+                {% if rec_mode!='view' %}
                     <button type="submit" class="btn btn-success">Save</button>
-                {% else %}
+                {% endif %}
+                {% if rec_mode=='view' %}
                     <a href="edit?acct_id={{acct.id}}{% if context!="acct" %}{% if context=='exps' %}&exp_id={{exp.id}}{% elif context=='revs' %}&rev_id={{rev.id}}{% elif context=='projs' %}&proj_id={{proj.id}}{% endif %}{% endif %}" class="btn btn-outline-secondary">Edit</a>
                 {% endif %}
             </div>

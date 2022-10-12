@@ -1,0 +1,103 @@
+{% block pretable %}
+
+<div class="container">
+    <h6>Post New Transaction</h6>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">New Transaction Menu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/accts/newtx?acct_id={{acct.id}}">New AdHoc Tx</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Rev Tx</a>
+            <ul class="dropdown-menu">
+                {% for i in acct.rev_ids %}
+                <li><a class="dropdown-item" href="/accts/newtx?acct_id={{acct.id}}&tx_type=rev&type_id={{i.id}}">{{i.display_name}}</a></li>
+                {%endfor%}
+              </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">New Exp Tx</a>
+            <ul class="dropdown-menu">
+                {% for i in acct.exp_ids %}
+                <li><a class="dropdown-item" href="/accts/newtx?acct_id={{acct.id}}&tx_type=exp&type_id={{i.id}}">{{i.display_name}}</a></li>
+                {%endfor%}
+              </ul>
+          </li>
+      </ul>
+</div>
+
+<table class="table table-success table-striped-columns">
+    <thead>
+        <tr>
+            <th scope="col">Transaction Type</th>
+            <th scope="col">Date</th>
+            <th scope="col">Memo</th>
+            <th scope="col">Amount</th>
+            {% if new_tx_data == 'adhoc' %}
+            <th scope="col">debit?</th> 
+            {% endif %}
+            <th scope="col">Submit</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <form method="POST" action="/accts/submit" id="newTxForm">
+                <input type="text" id="type_id" name="type_id" value="{{new_tx_data['type_id']}}" placeholder="{{new_tx_data['type_id']}}" readonly hidden>
+                <input type="text" id="form_submitted" name="form_submitted" value="newtx" readonly hidden>
+                {% if new_tx_data=='adhoc' %}
+                    <input type="text" id="tx_type" name="tx_type" value="adhoc" readonly hidden>
+                {% else %}
+                <input type="text" id="tx_type" name="tx_type" value="{{new_tx_data['type']}}" readonly hidden>
+                {% endif %}
+                <input type="text" id="acct_id" name="acct_id" value="{{acct.id}}" readonly hidden>
+                <td>
+                    {% if new_tx_data != 'adhoc' %}
+                        <input type="text" id="type_friendly" name="type_friendly" value="{{new_tx_data['type_friendly']}}" readonly>
+                    
+                    {% else %}
+                        <input type="text" id="type_friendly" name="type_friendly" value="AdHoc" readonly>
+                    {% endif %}
+                    
+                </td>
+                <td>
+                    {% if new_tx_data != 'adhoc' %}
+                    <input type="text" id="date" name="date" value="{{new_tx_data['next_date']}}">
+                    {% else %}
+                    <input type="text" id="date" name="date" placeholder="YYYY-MM-DD">
+                    {% endif %}
+                </td>
+                <td>
+                    {% if new_tx_data != 'adhoc' %}
+                    <input type="text" id="memo" name="memo" value="{{new_tx_data['memo']}}" placeholder="{{new_tx_data['memo']}}" readonly>
+                    {% else %}
+                    <input type="text" id="memo" name="memo" placeholder="Memo line here">
+                    {% endif %}
+                <td>
+                    {% if new_tx_data != 'adhoc' %}
+                    <input type="text" id="amount" name="amount" value="{{new_tx_data['amount']}}">
+                    {% else %}
+                    <input type="text" id="amount" name="amount" placeholder="$####.00">
+                    {% endif %}
+                </td>
+                    {% if new_tx_data == 'adhoc' %}
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="adhoc_type" id="adhoc_type">
+                            <label class="form-check-label" for="adhoc_type">
+                              Debit
+                            </label>
+                          </div>
+                    </td>
+                    {% endif %}
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </td>
+            </form>
+            </tr>
+        </tbody>
+</table>
+</div>
+{% endblock %}

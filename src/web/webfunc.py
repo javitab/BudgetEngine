@@ -37,13 +37,15 @@ def getVars(varsDeclare:list):
             post.update({var:None})
         else: 
             if str('date') in var:
-                pass
-                # get[var]=get[var].dt.date()
-                # post[var]=post[var].dt.date()
+                try: get.update({var:makeDate(get[var])})
+                except: pass
+                try: post.update({var:makeDate(post[var])})
+                except: pass
             if str('amount') in var:
-                pass
-                #get[var]=Decimal(get[var])
-                #post[var]=Decimal(post[var])
+                try: get.update({var:Decimal(get[var])})
+                except: pass
+                try: post.update({var:Decimal(post[var])})
+                except: pass
     output={'get':get,'post':post}
     return output
 
@@ -118,6 +120,26 @@ class getAcctTableData():
             _row.append(ptx.ad_hoc)
             _row.append(ptx.balance)
             self.rows.append(_row)
+
+class getProjectedTxTableData():
+    """
+    Returns a list of dictionaries of data to display in projection table
+    """
+    def __init__(self,Projection:object):
+        self.rows=[]
+        self.projection=Projection
+        self.header=self.projection.TableHeaders
+        for ptx in self.projection.projected_txs:
+            _row=[]
+            _row.append(ptx.item_id)
+            _row.append(ptx.seq)
+            _row.append(ptx.date)
+            _row.append(ptx.memo)
+            _row.append(ptx.tx_type)
+            _row.append(ptx.ad_hoc)
+            _row.append(ptx.balance)
+            self.rows.append(_row)
+
 
 def contextVars(acct=False,exp=False,rev=False,projection=False):
     if acct!=False:

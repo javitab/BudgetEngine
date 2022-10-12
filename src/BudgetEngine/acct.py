@@ -114,7 +114,7 @@ class Acct(Document):
     exp_ids=ListField((ReferenceField(Exp)))
     active_ptx_log_id=ReferenceField(PtxLog)
     history_ptx_log_ids=ListField((ReferenceField(PtxLog)))
-    projections=ListField(ReferenceField(Projection))
+    proj_ids=ListField(ReferenceField(Projection))
     notes=StringField()
     meta = {
         'indexes': ['rev_ids','exp_ids','active_ptx_log_id','history_ptx_log_ids']

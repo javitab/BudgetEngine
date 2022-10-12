@@ -6,14 +6,20 @@
 
 {% block title %}Account View{% endblock %}
 
-
 {% block content %}
 
 {% include "/deps/pre-content-nav-block.html" %}
+{% if context=='newtx' %}
+    
+{% endif %}
+{% if context!='newtx' %}
+    {% block ContextForm %}
+        {{ render_context_form(ContextForm)}}
+    {% endblock %}
+{% else %}
+    {% include "/deps/newtx.j2" %}
+{% endif %}
 
-{% block ContextForm %}
-    {{ render_context_form(ContextForm)}}
-{% endblock %}
 
 {% if rec_mode!='new' %}
     {{ render_table(ptx) }}    

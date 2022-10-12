@@ -143,7 +143,7 @@ class Projection(Document):
             iterDate=iterDate+timedelta(days=1)
         self.save()
 
-    TableHeaders=['txID','date','memo','amount','tx_type','ad_hoc','balance']
+    TableHeaders=['txID','seq','date','memo','tx_type','ad_hoc','balance']
 
     FormInputGroups=[
     {
@@ -169,11 +169,11 @@ class Projection(Document):
     {
         'input_group_name': 'Projection Inputs',
         'field_name': 'start_date',
-        'read_only': "New",
+        'read_only': "Always",
         'hidden': False,
         'field_friendly': 'Start Date',
-        'field_placeholder': 'Enter start date for projection (required)',
-        'field_help': 'Enter start date for projection',
+        'field_placeholder': '-',
+        'field_help': 'Start date for projection',
         'field_type': 'date'
     },
     {
@@ -182,8 +182,18 @@ class Projection(Document):
         'read_only': "New",
         'hidden': False,
         'field_friendly': 'End Date',
-        'field_placeholder': 'Enter end date for projection (required)',
+        'field_placeholder': '[YYYY-MM-DD] (required)',
         'field_help': 'Enter end date for projection',
         'field_type': 'date'
+    },
+    {
+        'input_group_name': 'Projection Notes',
+        'field_name': 'notes',
+        'read_only': "No",
+        'hidden': False,
+        'field_friendly': 'Notes',
+        'field_placeholder': 'Enter notes for projection',
+        'field_help': 'Enter notes for projection',
+        'field_type': 'textarea'
     }
 ]

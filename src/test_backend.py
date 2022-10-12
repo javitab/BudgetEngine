@@ -24,11 +24,11 @@ testUsers=1
 #Number of test accounts per user
 testAccts=1
 
-#Number of text expenses per user
+#Number of test expenses per user
 testExpenses=5
 
 #Number of days to generate test data for
-PtxLogDataDays=60
+PtxLogDataDays=120
 
 fake=Faker()
 Faker.seed(random.Random().randint(1,1000))
@@ -82,7 +82,7 @@ if __name__=='__main__':
                 display_name=fake.random_element(elements=['Day Job','Uber','Lyft','Instacart']),
                 amount=fake.pydecimal(positive=True, min_value=500, max_value=1000, left_digits=6, right_digits=2),
                 frequency="weekly",
-                start_date=fake.date_time_between(start_date="+2d",end_date="+30d",tzinfo=None),
+                start_date=fake.date_time_between(start_date="-120d",end_date="-60d",tzinfo=None),
                 notes=fake.text(max_nb_chars=200)
 
             )
@@ -97,7 +97,7 @@ if __name__=='__main__':
                     display_name=fake.random_element(elements=['Rent','Netflix','Spotify','Cellphone','Electric','Gas','Water','Mortgage','Car Loan']),
                     amount=fake.pydecimal(positive=True, min_value=1, max_value=100, left_digits=3, right_digits=2),
                     frequency="monthly",
-                    start_date=fake.date_time_between(start_date="+5d",end_date="now",tzinfo=None),
+                    start_date=fake.date_time_between(start_date="-120d",end_date="-60d",tzinfo=None),
                     notes=fake.text(max_nb_chars=200)
                 )
                 newExp.save()
@@ -113,10 +113,14 @@ if __name__=='__main__':
                 print("rev: ", irev.start_date.strftime("%Y-%m-%d"), irev.display_name, irev.amount, irev.frequency, irev.next_date())
             
             #Generate data to PtxLog with expenses and revenues
-
+            _date=dt.now().date().__add__(timedelta(days=-PtxLogDataDays))
+            print("_date: ",_date)
             for _ in range(PtxLogDataDays):
-                _date=dt.now().__add__(timedelta(days=_))
-                _date=dt.date(_date)
+                print("     _date: ",_date)
+                _date=_date.__add__(timedelta(days=1))
+                print("     _date: ",_date)
+                #_date=dt.date(_date)
+                #print("     _date: ",_date)
                 for rev in newAcct.rev_ids:
                     rev=Rev.objects.get(id=rev)
                     if rev.next_date()==_date:
@@ -182,7 +186,7 @@ if __name__=='__main__':
             )
             newProjection.save()
             newProjection.runProjection(projAcct)
-            projAcct.projections.append(newProjection.id)
+            projAcct.proj_ids.append(newProjection.id)
             projAcct.save()
             print("\n### Printing Projection for Acct: ",projAcct.account_display_name,"###")
             for i in newProjection.projected_txs:

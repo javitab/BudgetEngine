@@ -1,9 +1,9 @@
-import contextvars
 from flask import Blueprint,render_template,request,flash,redirect,url_for
 from flask_login import login_required, current_user
+from bson import ObjectId
 
 
-from ..BudgetEngine.acct import Acct, PtxLog
+from ..BudgetEngine.acct import Acct, PtxLog, Tx
 
 from ..BudgetEngine.datafunc import *
 from ..BudgetEngine.dtfunc import *
@@ -79,11 +79,53 @@ def new():
             FormAction="/accts/submit"
             )
     return render_template("accts.j2",context=context,ContextForm=acctContextForm,user=current_user,rec_mode=rec_mode)
+
+@acct.route('/newtx', methods=['GET','POST'])
+@login_required
+def newtx():
+    #Collecting get and post values
+    rec_mode='view'
+    declareVars=['acct_id','tx_type','type_id']
+    for i in contextFormData.contextFormFieldNames(Acct): declareVars.append(i)
+    vars=getVars(declareVars)
+    webPOST=vars['post']
+    webGET=vars['get']
+    new_tx_data={}
+    if webGET['acct_id']!=None:
+        acct=Acct.objects.get(id=str(webGET['acct_id']))
+    else:
+        acct=Acct.objects.get(id=webPOST['acct_id'])
+    if webGET['tx_type']=='exp':
+        exp=Exp.objects.get(id=webGET['type_id'])
+        new_tx_data.update(
+            {
+                'type':'exp',
+                'type_friendly': 'Expense',
+                'type_id':exp.id,
+                'next_date':exp.next_date(),
+                'amount':exp.amount,
+                'memo':exp.display_name,
+            })
+    elif webGET['tx_type']=='rev':
+        rev=Rev.objects.get(id=webGET['type_id'])
+        new_tx_data.update(
+            {
+                'type':'rev',
+                'type_friendly': 'Revenue',
+                'type_id':rev.id,
+                'next_date':rev.next_date(),
+                'amount':rev.amount,
+                'memo':rev.display_name
+            })
+    else:
+        new_tx_data='adhoc'
+        
+    return render_template("accts.j2",ptx=getAcctTableData(acct),new_tx_data=new_tx_data,acct=acct,context='newtx',user=current_user,rec_mode=rec_mode)
     
 @acct.route('submit', methods=['POST'])
 def submit():
     #Collecting get and post values
-    declareVars=['acct_id']
+    declareVars=['acct_id','type_id','tx_type','date','memo','amount','form_submitted','adhoc_type']
     for i in contextFormData.contextFormFieldNames(Acct): declareVars.append(i)
     vars=getVars(declareVars)
     webPOST=vars['post']
@@ -92,7 +134,7 @@ def submit():
         if webGET['acct_id']!=None:
             acct=Acct.objects.get(id=str(webGET['acct_id']))
         else:
-            acct=Acct.objects.get(id=webPOST['acct_id'])
+            acct=Acct.objects.get(id=str(webPOST['acct_id']))
         try:
             acct.account_display_name=webPOST['account_display_name']
             acct.bank_name=webPOST['bank_name']
@@ -126,6 +168,47 @@ def submit():
             return redirect(url_for('acct.view',context=context,acct_id=str(acct.id)))
         except Exception as e:
             print(e)
+    elif webPOST['form_submitted']=="newtx":
+        if webGET['acct_id']!=None:
+            acct=Acct.objects.get(id=str(webGET['acct_id']))
+        else:
+            acct=Acct.objects.get(id=str(webPOST['acct_id']))
+
+        if webPOST['tx_type']=='exp': 
+            tx_type='debit'
+            balance=acct.current_balance-webPOST['amount']
+            exp=Exp.objects.get(id=webPOST['type_id'])
+            exp.last_date=webPOST['date']
+            ad_hoc=False
+        if webPOST['tx_type']=='rev': 
+            tx_type='credit'
+            balance=acct.current_balance+webPOST['amount']
+            rev=Rev.objects.get(id=webPOST['type_id'])
+            rev.last_date=webPOST['date']
+            ad_hoc=False
+        if webPOST['tx_type']=='adhoc':
+            if webPOST['adhoc_type']=='on':
+                tx_type='debit'
+                balance=acct.current_balance-webPOST['amount']
+            else:
+                tx_type='credit'
+                balance=acct.current_balance+webPOST['amount']
+            ad_hoc=True
+
+        ptx=acct.active_ptx_log_id.posted_txs
+        ptx.create(
+            txID=ObjectId(),
+            date=webPOST['date'],
+            memo=webPOST['memo'],
+            amount=webPOST['amount'],
+            tx_type=tx_type,
+            ad_hoc=ad_hoc,
+            balance=balance
+        )
+        ptx.save()
+        acct.save()
+        return redirect(url_for('acct.view',context=context,acct_id=str(acct.id)))
+
     else:
         acct=current_user.acctIds[0]
         return redirect(url_for('acct.view',context=context,acct_id=str(acct.id)))

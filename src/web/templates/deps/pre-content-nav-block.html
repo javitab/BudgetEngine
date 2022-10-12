@@ -1,16 +1,23 @@
 <br>
 
+{% if rec_mode!='new' and context=="acct" %}
 <h3>Viewing transactions in {{acct.account_display_name}}</h3>
+{% endif %}
 <ul class="nav nav-tabs">
   <li class="nav-item">
     {% if acct==[] %}
     <a class="nav-link active" aria-current="page" href="#">No Account Selected</a>
     {% else %}
     {% endif %}
-    <a class="nav-link active" aria-current="page" href="/accts/view?acct_id={{acct.id}}">{{acct.account_display_name}}</a>
+    {% if rec_mode!='new' and context=="acct" %}
+      <a class="nav-link active" aria-current="page" href="/accts/view?acct_id={{acct.id}}">{{acct.account_display_name}}</a>
+    {% endif %}
+    
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="/tx/new?acct_id={{acct.id}}&txtype=adhoc" role="button">New Tx</a>
+    {% if rec_mode!='new' and context=="acct" %}
+    <a class="nav-link" href="/accts/newtx?acct_id={{acct.id}}" role="button">New Tx</a>
+    {% endif %}
   </li>
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Accounts</a>
@@ -20,11 +27,12 @@
       {%endfor%}
       <li><hr class="dropdown-divider"></li>
       <li><a class="dropdown-item" href="/accts/new">Create New Account</a></li>
-      {% if context=="acct" %}
+      {% if context!="acct" and rec_mode!="new" %}
       <li><a class="dropdown-item" href="/accts/edit?acct_id={{acct.id}}">Edit This Account</a></li>
       {% endif %}
     </ul>
   </li>
+  {% if context!='accts' and rec_mode!='new' %}
   <li class="nav-item">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Revenues</a>
     <ul class="dropdown-menu">
@@ -54,10 +62,11 @@
   </li><li class="nav-item">
     <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="/#" role="button" aria-expanded="false">Projections</a>
     <ul class="dropdown-menu">
-        {% for i in acct.projs %}
-        <li><a class="dropdown-item" href="/projs/view?proj_id={{i.id}}">{{i.display_name}}</a></li>
+        {% for i in acct.proj_ids %}
+        <li><a class="dropdown-item" href="/projs/view?acct_id={{acct.id}}&proj_id={{i.id}}">{{i.disp_name}}</a></li>
         {%endfor%}
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="/projs/new?acct_id={{acct.id}}">Create New Projection</a></li>
       </ul>
   </li> </li>
+  {% endif %}
