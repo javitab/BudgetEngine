@@ -1,6 +1,6 @@
 # BudgetEngine
 
-## Visit the demo at https://budgetengine.io/demo
+## Visit the demo at https://demo.budgetengine.io/
 
 ### Brief Description
 
