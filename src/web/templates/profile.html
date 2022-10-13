@@ -16,6 +16,18 @@
   <h4 class="subtitle">
     It looks like you haven't created a <a href="accts/new">new account</a> yet. Click the link to get started!
   </h4>
+{% else %}
+  <h4 class="subtitle">
+    You have the following accounts:
+  </h4>
+  <ul>
+    {% for acct in current_user.acctIds %}
+      <li>
+        <a href="accts/view?acct_id={{acct.id}}">{{acct.account_display_name}}</a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endif %}
+
 
 {% endblock %}
