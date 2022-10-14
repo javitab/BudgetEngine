@@ -9,3 +9,5 @@ mongoengine
 faker
 prettytable
 waitress
+gunicorn
+
