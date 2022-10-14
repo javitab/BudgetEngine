@@ -8,7 +8,6 @@ def create_app():
     from .views import views
     from .auth import auth
     from .admin import admin
-    from .proj import proj
     from .tx import tx
     from .acct import acct
     from .exps import exps
@@ -18,7 +17,6 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(admin, url_prefix='/admin')
-    app.register_blueprint(proj, url_prefix='/projection')
     app.register_blueprint(tx, url_prefix='/tx')
     app.register_blueprint(acct, url_prefix='/accts')
     app.register_blueprint(exps, url_prefix='/exps')

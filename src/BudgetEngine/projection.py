@@ -143,7 +143,7 @@ class Projection(Document):
             iterDate=iterDate+timedelta(days=1)
         self.save()
 
-    TableHeaders=['txID','seq','date','memo','tx_type','ad_hoc','balance']
+    TableHeaders=['txID','seq','date','memo','amount','ad_hoc','balance']
 
     FormInputGroups=[
     {
