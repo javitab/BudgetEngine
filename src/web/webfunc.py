@@ -113,7 +113,7 @@ class getAcctTableData():
         for ptx in PtxLog.posted_txs:
             _row=[]
             _row.append(ptx.txID)
-            _row.append(ptx.date)
+            _row.append(ptx.date.strftime('%Y-%m-%d'))
             _row.append(ptx.memo)
             _row.append(ptx.amount)
             _row.append(ptx.tx_type)
