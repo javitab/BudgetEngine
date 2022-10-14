@@ -103,7 +103,7 @@ def submit():
         acct=Acct.objects.get(id=str(webGET['acct_id']))
     else:
         acct=Acct.objects.get(id=webPOST['acct_id'])
-    if webPOST['form_submitted']=="true":
+    if webPOST['form_submitted']=="edit":
         if webGET['rev_id']!=None:
             rev=Rev.objects.get(id=webGET['id'])
         else:
