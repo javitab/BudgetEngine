@@ -66,7 +66,17 @@ class Projection(Document):
             while iterDate<=self.end_date:
                 if iterDate not in rev.exclusion_dates:
                     iterDateTime=dt.combine(iterDate, dt.min.time())
-                    self.rev_txs.create(
+                    if rev.end_date!=None:
+                        if iterDate<rev.end_date:
+                            self.rev_txs.create(
+                            rev_id=rev.id,
+                            date=iterDateTime,
+                            memo=rev.display_name,
+                            amount=rev.amount
+                        )
+                            self.rev_txs.save()
+                    else:
+                        self.rev_txs.create(
                         rev_id=rev.id,
                         date=iterDateTime,
                         memo=rev.display_name,
@@ -85,13 +95,23 @@ class Projection(Document):
             while iterDate<=self.end_date:
                 if iterDate not in exp.exclusion_dates:
                     iterDateTime=dt.combine(iterDate, dt.min.time())
-                    self.exp_txs.create(
-                        exp_id=exp.id,
-                        date=iterDateTime,
-                        memo=exp.display_name,
-                        amount=exp.amount
-                    )
-                    self.exp_txs.save()
+                    if exp.end_date!=None:
+                        if iterDate<exp.end_date:
+                            self.exp_txs.create(
+                            exp_id=exp.id,
+                            date=iterDateTime,
+                            memo=exp.display_name,
+                            amount=exp.amount
+                        )
+                            self.exp_txs.save()
+                    else:
+                        self.exp_txs.create(
+                            exp_id=exp.id,
+                            date=iterDateTime,
+                            memo=exp.display_name,
+                            amount=exp.amount
+                        )
+                        self.exp_txs.save()
                 iterDate=txIterate(exp.frequency,iterDate)
 
     def runProjection(self,Acct):
