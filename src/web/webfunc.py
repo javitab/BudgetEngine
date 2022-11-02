@@ -42,9 +42,9 @@ def getVars(varsDeclare:list):
                 try: post.update({var:makeDate(post[var])})
                 except: pass
             if str('amount') in var:
-                try: get.update({var:Decimal(get[var])})
+                try: get.update({var:Decimal(str(get[var]).replace("$",""))})
                 except: pass
-                try: post.update({var:Decimal(post[var])})
+                try: post.update({var:Decimal(str(post[var]).replace("$",""))})
                 except: pass
     output={'get':get,'post':post}
     return output
