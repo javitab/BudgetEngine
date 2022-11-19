@@ -6,6 +6,7 @@ src/__pycache__/
 *.pyc
 loadLocalData.sh
 .env
+config.json
 .vscode
 venv
 BudgetEngine.code-workspace
