@@ -8,6 +8,7 @@ termcolor
 mongoengine
 faker
 prettytable
-waitress
+waitress>=2.1.1
 gunicorn
-
+setuptools>=65.5.1
+numpy>=1.22.2
