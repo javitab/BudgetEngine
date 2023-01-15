@@ -10,3 +10,4 @@ config.json
 .vscode
 venv
 BudgetEngine.code-workspace
+config.json
