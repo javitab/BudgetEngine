@@ -2,6 +2,6 @@
     "MongoDBIP": "localhost",
     "MongoDBPort": 27017,
     "HostExternalIP": "localhost",
-    "DBName": "BudgetEngine",
-    "demo_mode": "true"
+    "DBName": "be-dev",
+    "nonprod": "true"
 }

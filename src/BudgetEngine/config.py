@@ -15,4 +15,4 @@ class Vars:
         self.MongoDBPort = config['MongoDBPort']
         self.HostExternalIP = config['HostExternalIP']
         self.DBName = config['DBName']
-        self.demo_mode = config['demo_mode']
+        self.nonprod = config['nonprod']

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if demo_mode=="true" %}
+{% if nonprod=="true" %}
     {% include '/deps/home_demo.html' %}
 {% else %}
     {% include '/deps/home.html' %}

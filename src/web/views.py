@@ -20,7 +20,7 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    return render_template("home.j2", demo_mode=evars.demo_mode)
+    return render_template("home.j2", nonprod=evars.nonprod)
 
 
 @views.route('/profile')
