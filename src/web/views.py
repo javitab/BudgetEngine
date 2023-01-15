@@ -15,10 +15,12 @@ from .webfunc import *
 
 views = Blueprint('views', __name__)
 
+config=Vars
+
 
 @views.route('/')
 def home():
-    return render_template("home.j2", demo_mode=Vars.DemoMode)
+    return render_template("home.j2", demo_mode=config.DemoMode)
 
 
 @views.route('/profile')
