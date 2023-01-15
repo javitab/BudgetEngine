@@ -4,6 +4,11 @@
 
 {% block content %}
 
-{% include '/deps/home.html' %}
+{% if demo_mode==true %}
+    {% include '/deps/home_demo.html' %}
+{% else %}
+    {% include '/deps/home.html' %}
+{% endif %}
+
 
 {% endblock %}
